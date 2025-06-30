@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Radio, Menu, X, Heart, Search, Home, Info, Waves } from 'lucide-react'
+import { Radio, Menu, X, Heart, Search, Home, Info, Waves, Plus } from 'lucide-react'
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -11,6 +11,7 @@ const Header: React.FC = () => {
     { name: 'Início', href: '/', icon: Home },
     { name: 'Explorar', href: '/browse', icon: Search },
     { name: 'Favoritos', href: '/favorites', icon: Heart },
+    { name: 'Cadastrar', href: '/register-radio', icon: Plus },
     { name: 'Sobre', href: '/about', icon: Info },
   ]
 

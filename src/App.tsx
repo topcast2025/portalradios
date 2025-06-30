@@ -7,6 +7,8 @@ import Home from './pages/Home'
 import Browse from './pages/Browse'
 import Favorites from './pages/Favorites'
 import About from './pages/About'
+import RegisterRadio from './pages/RegisterRadio'
+import RadioDetails from './pages/RadioDetails'
 import { RadioProvider } from './context/RadioContext'
 import AudioPlayer from './components/AudioPlayer'
 
@@ -27,6 +29,8 @@ function App() {
             <Route path="/browse" element={<Browse />} />
             <Route path="/favorites" element={<Favorites />} />
             <Route path="/about" element={<About />} />
+            <Route path="/register-radio" element={<RegisterRadio />} />
+            <Route path="/radio/:id" element={<RadioDetails />} />
           </Routes>
         </motion.main>
 

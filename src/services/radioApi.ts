@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { RadioStation, SearchFilters } from '../types/radio'
 
-const BASE_URL = 'https://de1.api.radio-browser.info/json'
+const BASE_URL = 'https://nl.api.radio-browser.info/json'
 
 class RadioAPI {
   private api = axios.create({
