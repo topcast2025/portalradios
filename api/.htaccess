@@ -17,21 +17,13 @@ Header always set X-XSS-Protection "1; mode=block"
 RewriteCond %{REQUEST_METHOD} OPTIONS
 RewriteRule ^(.*)$ - [R=200,L]
 
-# API Routes - Rádios Customizadas
+# API Routes
 RewriteRule ^health/?$ endpoints/health.php [L,QSA]
 RewriteRule ^radios/?$ endpoints/radios.php [L,QSA]
 RewriteRule ^radios/([0-9]+)/?$ endpoints/radios.php [L,QSA]
 RewriteRule ^radios/([0-9]+)/(click|statistics|report)/?$ endpoints/radios.php [L,QSA]
 RewriteRule ^upload-logo/?$ endpoints/upload.php [L,QSA]
-
-# API Routes - Rádios Externas (Radio-Browser)
 RewriteRule ^external-radios/(.*)$ endpoints/external-radios.php [L,QSA]
-
-# API Routes - Busca Unificada
-RewriteRule ^search/?$ endpoints/radio-search.php [L,QSA]
-RewriteRule ^popular/?$ endpoints/popular-radios.php [L,QSA]
-RewriteRule ^countries/?$ endpoints/countries.php [L,QSA]
-RewriteRule ^genres/?$ endpoints/genres.php [L,QSA]
 
 # Security - Allow access to endpoints
 <FilesMatch "\.(php)$">

@@ -1,4 +1,4 @@
-# RadioWave - Configuração Apache Principal
+# Main .htaccess for RadioWave
 RewriteEngine On
 
 # Security headers
@@ -12,28 +12,14 @@ RewriteEngine On
 # Redirect API calls to api folder
 RewriteRule ^api/(.*)$ api/$1 [L]
 
-# Serve index.html as default for root
-DirectoryIndex index.html index.php
-
-# Handle specific PHP files
-RewriteCond %{REQUEST_FILENAME} -f
-RewriteCond %{REQUEST_FILENAME} \.php$
-RewriteRule ^(.*)$ $1 [L]
-
-# Handle React Router and SPA routing (only if file doesn't exist)
+# Handle React Router (redirect all non-file requests to index.html)
+# But only if the file doesn't exist and it's not an API call
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_URI} !^/api/
 RewriteCond %{REQUEST_URI} !^/uploads/
-RewriteCond %{REQUEST_URI} !^/install/
 RewriteCond %{REQUEST_URI} !\.(php|html|css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$
-RewriteRule . /index.html [L]
-
-# PHP Configuration
-php_value upload_max_filesize 5M
-php_value post_max_size 5M
-php_value max_execution_time 60
-php_value memory_limit 256M
+RewriteRule . /index.php [L]
 
 # Gzip compression
 <IfModule mod_deflate.c>
@@ -62,6 +48,12 @@ php_value memory_limit 256M
     ExpiresByType image/webp "access plus 1 year"
 </IfModule>
 
+# PHP Configuration
+php_value upload_max_filesize 5M
+php_value post_max_size 5M
+php_value max_execution_time 60
+php_value memory_limit 256M
+
 # Deny access to sensitive files
 <Files "*.sql">
     Order deny,allow
@@ -73,23 +65,7 @@ php_value memory_limit 256M
     Deny from all
 </Files>
 
-# Allow access to specific PHP files
 <Files "debug.php">
-    Order allow,deny
-    Allow from all
-</Files>
-
-<Files "index.php">
-    Order allow,deny
-    Allow from all
-</Files>
-
-<Files "cadastro-radio.php">
-    Order allow,deny
-    Allow from all
-</Files>
-
-<Files "test-complete.php">
     Order allow,deny
     Allow from all
 </Files>
