@@ -3,7 +3,7 @@ import { RadioStation, SearchFilters } from '../types/radio'
 
 const BASE_URL = process.env.NODE_ENV === 'production' 
   ? 'https://wave.soradios.online/api/external-radios' 
-  : 'http://127.0.0.1:3001/api/external-radios'
+  : 'http://localhost/api/external-radios'
 
 class RadioAPI {
   private api = axios.create({

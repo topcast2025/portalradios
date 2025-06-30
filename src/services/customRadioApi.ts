@@ -1,10 +1,10 @@
-// API para rádios customizadas (seu backend)
+// API para rádios customizadas (backend PHP)
 import axios from 'axios'
 import { CustomRadio, RadioRegistrationData, RadioStatistics } from '../types/customRadio'
 
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
   ? 'https://wave.soradios.online/api' 
-  : 'http://127.0.0.1:3001/api'
+  : 'http://localhost/api'
 
 class CustomRadioAPI {
   private api = axios.create({
@@ -45,7 +45,7 @@ class CustomRadioAPI {
   async getCustomRadios(page: number = 1, limit: number = 20): Promise<{ radios: CustomRadio[]; total: number }> {
     try {
       const response = await this.api.get(`/radios?page=${page}&limit=${limit}`)
-      return response.data
+      return response.data.data
     } catch (error) {
       console.error('Error fetching custom radios:', error)
       throw new Error('Erro ao carregar rádios customizadas')
@@ -56,7 +56,7 @@ class CustomRadioAPI {
   async getRadioById(id: number): Promise<CustomRadio> {
     try {
       const response = await this.api.get(`/radios/${id}`)
-      return response.data
+      return response.data.data
     } catch (error) {
       console.error('Error fetching radio by ID:', error)
       throw new Error('Erro ao carregar detalhes da rádio')
@@ -112,7 +112,7 @@ class CustomRadioAPI {
   async getRadioStatistics(radioId: number): Promise<RadioStatistics[]> {
     try {
       const response = await this.api.get(`/radios/${radioId}/statistics`)
-      return response.data
+      return response.data.data
     } catch (error) {
       console.error('Error fetching radio statistics:', error)
       throw new Error('Erro ao carregar estatísticas')
