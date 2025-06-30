@@ -36,7 +36,7 @@
   }
 
   .radio-card {
-    @apply card p-6 hover:scale-105 transition-all duration-300 cursor-pointer group;
+    @apply card p-6 hover:scale-105 transition-all duration-300 cursor-pointer;
   }
 
   .radio-card:hover {
