@@ -1,13 +1,5 @@
+# Main .htaccess for RadioWave
 RewriteEngine On
-
-# Redirect API calls to api folder
-RewriteRule ^api/(.*)$ api/$1 [L]
-
-# Handle React Router (redirect all non-file requests to index.html)
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_URI} !^/api/
-RewriteRule . /index.html [L]
 
 # Security headers
 <IfModule mod_headers.c>
@@ -16,6 +8,18 @@ RewriteRule . /index.html [L]
     Header always set X-XSS-Protection "1; mode=block"
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
 </IfModule>
+
+# Redirect API calls to api folder
+RewriteRule ^api/(.*)$ api/$1 [L]
+
+# Handle React Router (redirect all non-file requests to index.html)
+# But only if the file doesn't exist and it's not an API call
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/api/
+RewriteCond %{REQUEST_URI} !^/uploads/
+RewriteCond %{REQUEST_URI} !\.(php|html|css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$
+RewriteRule . /index.php [L]
 
 # Gzip compression
 <IfModule mod_deflate.c>
@@ -28,6 +32,7 @@ RewriteRule . /index.html [L]
     AddOutputFilterByType DEFLATE application/rss+xml
     AddOutputFilterByType DEFLATE application/javascript
     AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/json
 </IfModule>
 
 # Cache static assets
@@ -40,4 +45,27 @@ RewriteRule . /index.html [L]
     ExpiresByType image/jpeg "access plus 1 year"
     ExpiresByType image/gif "access plus 1 year"
     ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
 </IfModule>
+
+# PHP Configuration
+php_value upload_max_filesize 5M
+php_value post_max_size 5M
+php_value max_execution_time 60
+php_value memory_limit 256M
+
+# Deny access to sensitive files
+<Files "*.sql">
+    Order deny,allow
+    Deny from all
+</Files>
+
+<Files "*.log">
+    Order deny,allow
+    Deny from all
+</Files>
+
+<Files "debug.php">
+    Order allow,deny
+    Allow from all
+</Files>

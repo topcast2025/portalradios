@@ -1,4 +1,8 @@
 <?php
+/**
+ * Model para gerenciar rádios customizadas
+ */
+
 class Radio {
     private $conn;
     private $table_name = "radios";
@@ -7,43 +11,50 @@ class Radio {
         $this->conn = $db;
     }
 
-    // Get all radios with pagination and filters
+    /**
+     * Buscar todas as rádios com paginação e filtros
+     */
     public function getRadios($page = 1, $limit = 20, $filters = []) {
         try {
             $offset = ($page - 1) * $limit;
             
+            // Condições WHERE
             $where_conditions = ["status = 'active'"];
             $params = [];
 
+            // Filtro por país
             if (!empty($filters['country'])) {
-                $where_conditions[] = "country = :country";
-                $params[':country'] = $filters['country'];
+                $where_conditions[] = "country LIKE :country";
+                $params[':country'] = '%' . $filters['country'] . '%';
             }
 
+            // Filtro por idioma
             if (!empty($filters['language'])) {
-                $where_conditions[] = "language = :language";
-                $params[':language'] = $filters['language'];
+                $where_conditions[] = "language LIKE :language";
+                $params[':language'] = '%' . $filters['language'] . '%';
             }
 
+            // Filtro por gênero
             if (!empty($filters['genre'])) {
                 $where_conditions[] = "JSON_CONTAINS(genres, :genre)";
                 $params[':genre'] = '"' . $filters['genre'] . '"';
             }
 
+            // Filtro por busca textual
             if (!empty($filters['search'])) {
-                $where_conditions[] = "(radio_name LIKE :search_like OR brief_description LIKE :search_like)";
+                $where_conditions[] = "(radio_name LIKE :search_like OR brief_description LIKE :search_like OR detailed_description LIKE :search_like)";
                 $params[':search_like'] = '%' . $filters['search'] . '%';
             }
 
             $where_clause = implode(' AND ', $where_conditions);
 
-            // Get total count
+            // Contar total de registros
             $count_query = "SELECT COUNT(*) as total FROM " . $this->table_name . " WHERE " . $where_clause;
             $count_stmt = $this->conn->prepare($count_query);
             $count_stmt->execute($params);
             $total = $count_stmt->fetch()['total'];
 
-            // Get radios
+            // Buscar rádios
             $query = "SELECT id, name, email, radio_name, stream_url, logo_url, brief_description, 
                       detailed_description, genres, country, language, website, whatsapp, facebook, 
                       instagram, twitter, total_clicks, created_at, updated_at
@@ -64,9 +75,11 @@ class Radio {
             $stmt->execute();
             $radios = $stmt->fetchAll();
 
-            // Parse JSON genres
+            // Processar dados
             foreach ($radios as &$radio) {
                 $radio['genres'] = json_decode($radio['genres'] ?? '[]', true) ?: [];
+                $radio['total_clicks'] = (int)$radio['total_clicks'];
+                $radio['id'] = (int)$radio['id'];
             }
 
             return [
@@ -88,7 +101,9 @@ class Radio {
         }
     }
 
-    // Get radio by ID
+    /**
+     * Buscar rádio por ID
+     */
     public function getRadioById($id) {
         try {
             $query = "SELECT id, name, email, radio_name, stream_url, logo_url, brief_description, 
@@ -107,7 +122,10 @@ class Radio {
                 throw new Exception('Rádio não encontrada');
             }
 
+            // Processar dados
             $radio['genres'] = json_decode($radio['genres'] ?? '[]', true) ?: [];
+            $radio['total_clicks'] = (int)$radio['total_clicks'];
+            $radio['id'] = (int)$radio['id'];
 
             return [
                 'success' => true,
@@ -120,10 +138,12 @@ class Radio {
         }
     }
 
-    // Create new radio
+    /**
+     * Criar nova rádio
+     */
     public function createRadio($data) {
         try {
-            // Check if radio name already exists
+            // Verificar se já existe rádio com mesmo nome
             $check_query = "SELECT id FROM " . $this->table_name . " WHERE radio_name = :radio_name";
             $check_stmt = $this->conn->prepare($check_query);
             $check_stmt->bindParam(':radio_name', $data['radio_name']);
@@ -133,6 +153,17 @@ class Radio {
                 throw new Exception('Já existe uma rádio com este nome');
             }
 
+            // Preparar dados
+            $genres_json = json_encode($data['genres']);
+            $logo_url = $data['logo_url'] ?? '';
+            $detailed_description = $data['detailed_description'] ?? '';
+            $website = $data['website'] ?? '';
+            $whatsapp = $data['whatsapp'] ?? '';
+            $facebook = $data['facebook'] ?? '';
+            $instagram = $data['instagram'] ?? '';
+            $twitter = $data['twitter'] ?? '';
+
+            // Inserir rádio
             $query = "INSERT INTO " . $this->table_name . " (
                         name, email, radio_name, stream_url, logo_url, brief_description,
                         detailed_description, genres, country, language, website, whatsapp,
@@ -150,26 +181,25 @@ class Radio {
             $stmt->bindParam(':email', $data['email']);
             $stmt->bindParam(':radio_name', $data['radio_name']);
             $stmt->bindParam(':stream_url', $data['stream_url']);
-            $stmt->bindParam(':logo_url', $data['logo_url']);
+            $stmt->bindParam(':logo_url', $logo_url);
             $stmt->bindParam(':brief_description', $data['brief_description']);
-            $stmt->bindParam(':detailed_description', $data['detailed_description']);
-            
-            $genres_json = json_encode($data['genres']);
+            $stmt->bindParam(':detailed_description', $detailed_description);
             $stmt->bindParam(':genres', $genres_json);
-            
             $stmt->bindParam(':country', $data['country']);
             $stmt->bindParam(':language', $data['language']);
-            $stmt->bindParam(':website', $data['website']);
-            $stmt->bindParam(':whatsapp', $data['whatsapp']);
-            $stmt->bindParam(':facebook', $data['facebook']);
-            $stmt->bindParam(':instagram', $data['instagram']);
-            $stmt->bindParam(':twitter', $data['twitter']);
+            $stmt->bindParam(':website', $website);
+            $stmt->bindParam(':whatsapp', $whatsapp);
+            $stmt->bindParam(':facebook', $facebook);
+            $stmt->bindParam(':instagram', $instagram);
+            $stmt->bindParam(':twitter', $twitter);
 
             if ($stmt->execute()) {
+                $radioId = $this->conn->lastInsertId();
+                
                 return [
                     'success' => true,
                     'message' => 'Rádio cadastrada com sucesso! Aguarde aprovação.',
-                    'data' => ['radioId' => $this->conn->lastInsertId()]
+                    'data' => ['radioId' => (int)$radioId]
                 ];
             }
 
@@ -181,9 +211,109 @@ class Radio {
         }
     }
 
-    // Register click
+    /**
+     * Atualizar rádio
+     */
+    public function updateRadio($id, $data) {
+        try {
+            // Verificar se a rádio existe
+            $check_query = "SELECT id FROM " . $this->table_name . " WHERE id = :id";
+            $check_stmt = $this->conn->prepare($check_query);
+            $check_stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $check_stmt->execute();
+
+            if (!$check_stmt->fetch()) {
+                throw new Exception('Rádio não encontrada');
+            }
+
+            // Remover campos vazios
+            $data = array_filter($data, function($value) {
+                return $value !== null && $value !== '';
+            });
+
+            if (empty($data)) {
+                throw new Exception('Nenhum dado para atualizar');
+            }
+
+            // Processar gêneros se fornecidos
+            if (isset($data['genres']) && is_array($data['genres'])) {
+                $data['genres'] = json_encode($data['genres']);
+            }
+
+            // Construir query de atualização
+            $set_clauses = [];
+            foreach ($data as $key => $value) {
+                $set_clauses[] = "$key = :$key";
+            }
+            $set_clause = implode(', ', $set_clauses);
+
+            $query = "UPDATE " . $this->table_name . " 
+                      SET $set_clause, updated_at = CURRENT_TIMESTAMP 
+                      WHERE id = :id";
+
+            $stmt = $this->conn->prepare($query);
+            
+            // Bind parameters
+            foreach ($data as $key => $value) {
+                $stmt->bindValue(":$key", $value);
+            }
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+            if ($stmt->execute()) {
+                return [
+                    'success' => true,
+                    'message' => 'Rádio atualizada com sucesso'
+                ];
+            }
+
+            throw new Exception('Erro ao executar query de atualização');
+
+        } catch (Exception $e) {
+            error_log("Error in updateRadio: " . $e->getMessage());
+            throw new Exception("Erro ao atualizar rádio: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Deletar rádio (soft delete)
+     */
+    public function deleteRadio($id) {
+        try {
+            $query = "UPDATE " . $this->table_name . " SET status = 'inactive' WHERE id = :id";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+            if ($stmt->execute() && $stmt->rowCount() > 0) {
+                return [
+                    'success' => true,
+                    'message' => 'Rádio removida com sucesso'
+                ];
+            }
+
+            throw new Exception('Rádio não encontrada');
+
+        } catch (Exception $e) {
+            error_log("Error in deleteRadio: " . $e->getMessage());
+            throw new Exception("Erro ao remover rádio: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Registrar clique/acesso
+     */
     public function registerClick($id, $ip, $userAgent, $referrer) {
         try {
+            // Verificar se a rádio existe
+            $check_query = "SELECT id FROM " . $this->table_name . " WHERE id = :id AND status = 'active'";
+            $check_stmt = $this->conn->prepare($check_query);
+            $check_stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $check_stmt->execute();
+
+            if (!$check_stmt->fetch()) {
+                throw new Exception('Rádio não encontrada');
+            }
+
+            // Registrar clique
             $query = "INSERT INTO radio_clicks (radio_id, ip_address, user_agent, referrer) 
                       VALUES (:radio_id, :ip_address, :user_agent, :referrer)";
 
@@ -197,7 +327,7 @@ class Radio {
 
             return [
                 'success' => true,
-                'message' => 'Clique registrado'
+                'message' => 'Clique registrado com sucesso'
             ];
 
         } catch (Exception $e) {
@@ -206,7 +336,9 @@ class Radio {
         }
     }
 
-    // Get statistics
+    /**
+     * Buscar estatísticas da rádio
+     */
     public function getStatistics($id) {
         try {
             $query = "SELECT id, radio_id, access_count, period_start, period_end, last_updated
@@ -219,9 +351,18 @@ class Radio {
             $stmt->bindParam(':radio_id', $id, PDO::PARAM_INT);
             $stmt->execute();
 
+            $statistics = $stmt->fetchAll();
+
+            // Processar dados
+            foreach ($statistics as &$stat) {
+                $stat['id'] = (int)$stat['id'];
+                $stat['radio_id'] = (int)$stat['radio_id'];
+                $stat['access_count'] = (int)$stat['access_count'];
+            }
+
             return [
                 'success' => true,
-                'data' => $stmt->fetchAll()
+                'data' => $statistics
             ];
 
         } catch (Exception $e) {
@@ -230,9 +371,22 @@ class Radio {
         }
     }
 
-    // Report error
+    /**
+     * Reportar erro
+     */
     public function reportError($id, $errorDescription, $userEmail, $userIp) {
         try {
+            // Verificar se a rádio existe
+            $check_query = "SELECT id FROM " . $this->table_name . " WHERE id = :id";
+            $check_stmt = $this->conn->prepare($check_query);
+            $check_stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $check_stmt->execute();
+
+            if (!$check_stmt->fetch()) {
+                throw new Exception('Rádio não encontrada');
+            }
+
+            // Inserir relatório de erro
             $query = "INSERT INTO radio_error_reports (radio_id, error_description, user_email, user_ip) 
                       VALUES (:radio_id, :error_description, :user_email, :user_ip)";
 

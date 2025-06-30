@@ -1,13 +1,17 @@
+# API Configuration
 RewriteEngine On
 
 # Enable error logging
 php_flag log_errors on
 php_value error_log /tmp/php_errors.log
 
-# CORS Headers
+# Security headers
 Header always set Access-Control-Allow-Origin "*"
 Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
 Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+Header always set X-Content-Type-Options nosniff
+Header always set X-Frame-Options DENY
+Header always set X-XSS-Protection "1; mode=block"
 
 # Handle preflight requests
 RewriteCond %{REQUEST_METHOD} OPTIONS
@@ -27,7 +31,7 @@ RewriteRule ^external-radios/(.*)$ endpoints/external-radios.php [L,QSA]
     Allow from all
 </FilesMatch>
 
-# Deny access to config and models
+# Deny access to config and models from direct access
 <Files "config/*">
     Order deny,allow
     Deny from all
@@ -43,3 +47,9 @@ RewriteRule ^external-radios/(.*)$ endpoints/external-radios.php [L,QSA]
     Order deny,allow
     Deny from all
 </Files>
+
+# PHP Configuration
+php_value upload_max_filesize 5M
+php_value post_max_size 5M
+php_value max_execution_time 30
+php_value memory_limit 128M
