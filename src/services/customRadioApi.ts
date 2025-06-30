@@ -4,7 +4,7 @@ import { CustomRadio, RadioRegistrationData, RadioStatistics } from '../types/cu
 
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
   ? 'https://wave.soradios.online/api' 
-  : 'http://localhost/api'
+  : 'http://localhost:3001/api'
 
 class CustomRadioAPI {
   private api = axios.create({
