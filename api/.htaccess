@@ -33,13 +33,6 @@ RewriteRule ^popular/?$ endpoints/popular-radios.php [L,QSA]
 RewriteRule ^countries/?$ endpoints/countries.php [L,QSA]
 RewriteRule ^genres/?$ endpoints/genres.php [L,QSA]
 
-# API Routes - Específicas da Radio-Browser
-RewriteRule ^stations/topvote/([0-9]+)/?$ endpoints/external-radios.php [L,QSA]
-RewriteRule ^stations/search/?$ endpoints/external-radios.php [L,QSA]
-RewriteRule ^stations/bycountry/(.+)/?$ endpoints/external-radios.php [L,QSA]
-RewriteRule ^stations/bylanguage/(.+)/?$ endpoints/external-radios.php [L,QSA]
-RewriteRule ^stations/bytag/(.+)/?$ endpoints/external-radios.php [L,QSA]
-
 # Security - Allow access to endpoints
 <FilesMatch "\.(php)$">
     Order allow,deny
