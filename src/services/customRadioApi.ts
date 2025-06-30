@@ -3,7 +3,7 @@ import axios from 'axios'
 import { CustomRadio, RadioRegistrationData, RadioStatistics } from '../types/customRadio'
 
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://seudominio.com/api' 
+  ? 'https://wave.soradios.online/api' 
   : 'http://127.0.0.1:3001/api'
 
 class CustomRadioAPI {
