@@ -1,0 +1,498 @@
+/*
+Theme Name: Appside
+
+Adding support for languages written in a Right To Left (RTL) direction is easy -
+it's just a matter of overwriting all the horizontal positioning attributes
+of your CSS stylesheet in a separate stylesheet file named rtl.css.
+
+https://codex.wordpress.org/Right-to-Left_Language_Support
+
+*/
+
+
+body {
+	direction: rtl;
+	unicode-bidi: embed;
+}
+p,ul,ol{
+	text-align: right;
+}
+
+.navbar-area .nav-container .navbar-collapse .navbar-nav li {
+	margin-left: 20px;
+}
+.breadcrumb-area .page-title,
+.breadcrumb-area .page-list{
+	text-align: right;
+}
+.breadcrumb-area .page-list li:first-child {
+	margin-left: 15px;
+	margin-right: 0;
+}
+.breadcrumb-area .page-list li:after {
+	right: auto;
+	left: -15px;
+	content: '\f104';
+}
+.widget {
+	text-align: right;
+}
+.widget .widget-title:after {
+	left: auto;
+	right: 0;
+}
+.widget.widget_archive ul li {
+	padding-left: 0px;
+	padding-right: 25px;
+}
+.widget.widget_archive ul li:after {
+	left: auto;
+	right: 0;
+}
+.single-blog-classic-item .content .post-meta ,
+.single-post-details-item .entry-content .post-meta,
+.single-blog-classic-item .content,
+.comments-area .reply-title, .comments-area .comment-reply-title,
+.woocommerce-pagination, .blog-pagination,
+.navbar-area .nav-container .navbar-collapse .navbar-nav li,
+h1,h2,h3,h4,h5,h6,
+blockquote,dl,pre,
+table,
+address,
+.accordion-wrapper .card .card-body{
+	text-align: right;
+}
+.single-blog-classic-item .content .post-meta li:last-child ,
+.single-post-details-item .entry-content .post-meta li:last-child {
+	margin-right: 15px;
+	margin-left: 0px;
+}
+.single-blog-classic-item .content .post-meta li:last-child i,
+.single-post-details-item .entry-content .post-meta li:last-child i{
+	margin-left: 10px;
+}
+.single-blog-classic-item .content .post-meta li:first-child ,
+.single-post-details-item .entry-content .post-meta li:first-child {
+	margin-right: 0;
+}
+.single-blog-classic-item .content .readmore i{
+	display: none;
+}
+
+.single-post-details-item .entry-content blockquote:not([class]),
+.appside-page-content-area blockquote:not([class]) {
+	border-left: none;
+	border-right: 5px solid var(--main-color-one);
+}
+.comments-area .comment-list li .single-comment-wrap .thumb {
+	margin-left: 30px;
+	margin-right: 0px;
+}
+
+.xg-comments-meta li:after {
+	right: auto !important;
+	left: -12px;
+}
+ul.xg-comments-meta li + li,
+.comments-area .comment-list li ul.children ul.xg-comments-meta li + li{
+	margin-left: 0px;
+	margin-right: 16px;
+}
+
+.single-post-details-item .thumb .time, .single-blog-classic-item .thumb .time {
+	left: auto;
+	right: 0;
+}
+.single-post-details-item .thumb,
+.single-blog-classic-item .thumb {
+	text-align: right;
+}
+
+.single-blog-classic-item.format-link:after,
+.single-blog-classic-item.format-quote:after {
+	right: auto;
+	left: 30px;
+}
+.widget_categories ul li.cat-item:after {
+	left: auto;
+	right: 0;
+}
+.widget_categories ul li.cat-item {
+	padding-left: 0px;
+	padding-right: 15px;
+}
+
+.widget_recent_comments ul li {
+	padding-right:25px;
+	padding-left: 0px;
+}
+.widget_recent_comments ul li:after ,
+.widget_rss ul li .rss-date:after{
+	left: auto;
+	right: 0;
+}
+.widget_rss ul li .rss-date {
+	padding-left: 0px;
+	padding-right: 20px;
+}
+
+.appside-header-09 .header-inner .btn-wrapper {
+	text-align: right;
+}
+
+.single-counterup-style-03 .content .title,
+.single-counterup-style-03 .content p,
+.single-feature-list .content .title,
+.single-feature-list .content p,
+.single-discover-item .content .title,
+.single-discover-item .content p,
+.single-feature-item-02 .content .title,
+.single-feature-item-02 .content p
+{
+	text-align: center;
+}
+.icon-box-list li .icon {
+	margin-left: 10px;
+	margin-right: 0px;
+}
+.single-icon-item-05 .icon,
+.price-plan-left-content .section-title .subtitle ,
+.price-plan-tab-nav{
+	text-align: right;
+}
+
+.single-price-plan-03 .price-header .name,.single-price-plan-03 .price-body li {
+	text-align: center;
+}
+
+.price-plan-tab-nav .nav-tabs .nav-item:nth-child(2){
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 0px;
+	border-top-right-radius: 0px;
+}
+
+.price-plan-tab-nav .nav-tabs .nav-item:nth-child(1) {
+	border-top-left-radius: 0px;
+	border-bottom-left-radius: 0px;
+	border-bottom-right-radius: 5px;
+	border-top-right-radius: 5px;
+}
+
+.feature-list-04 .single-feature-list-item-04 .icon,
+.single-icon-box-03 .icon{
+	margin-right: 0;
+	margin-left: 20px;
+}
+
+.appside-rtl-slider .owl-carousel,
+.brand-carousel-wrapper.appside-rtl-slider { direction: ltr; }
+.appside-rtl-slider .owl-carousel .owl-item { direction: rtl; }
+
+.single-team-member .content .title,
+.single-team-member .content .post {
+	text-align: center;
+}
+.single-testimonial-item-02 .author-meta .title,
+.single-testimonial-item-02 .author-meta .designation {
+	text-align: right;
+	display: block;
+}
+
+.single-testimonial-item-02 .author-meta {
+	margin-left: 0px;
+	margin-right: 90px;
+}
+.single-testimonial-item-02 .author-meta .content {
+	margin-left: 0px;
+	margin-right: 20px;
+}
+.appside-testimonial-carousel-02 .owl-item.active.center .single-testimonial-item-02 .author-meta:before {
+	border-top-color: #154ec0;
+}
+.single-testimonial-item-02 .author-meta:before {
+	left: auto;
+	right: -55px;
+	border-top: 30px solid #e8f2f9;
+	border-right: 50px solid transparent;
+	border-left: none;
+}
+
+/* new added */
+.header-area .header-right-image {
+	position: absolute;
+	bottom: 0px;
+	right: auto;
+	left: 10%;
+}
+.header-area .btn-wrapper {
+	text-align: right;
+}
+.btn-wrapper .boxed-btn + .boxed-btn{
+	margin-left: 0px;
+	margin-right: 20px;
+}
+.single-counter-item .icon{
+	margin-right: 0;
+	margin-left: 20px;
+}
+.single-counter-item .content {
+	flex: 2;
+	text-align: right;
+}
+
+.single-testimonial-item .hover {
+	right: auto;
+	left: 0;
+}
+.single-price-plan-01 .price-header .name,.single-price-plan-01 .price-body ul {
+	text-align: center;
+}
+.about-us-area.style-two .feature-list .single-feature-list {
+    text-align: right;
+}
+
+.about-us-area.style-two .feature-list .single-feature-list .content p,
+.about-us-area.style-two .feature-list .single-feature-list .content .title {
+    text-align: right;
+}
+.navbar-area .nav-container .nav-right-content ul{
+	margin-left:0px;
+	margin-right:30px;
+}
+.single-icon-item-06 .content .title,
+.single-icon-item-06 .content p{
+	text-align: center;
+}
+.icon-list-style-one i {
+	margin-right: 0px;
+	margin-left: 5px;
+}
+.single-testimonial-item-04.white .content-area p,
+.single-testimonial-item-04.white .author-meta .title {
+	text-align: center;
+}
+.single-icon-item-07 .content .title,
+.single-icon-item-07 .content p {
+	text-align: center;
+}
+.single-icon-item-11 .content .title,
+.single-icon-item-11 .content p {
+	text-align: center;
+}
+.single-icon-item-08 .icon{
+	margin-right:0px;
+	margin-left:40px;
+}
+.image-box-style-01 .hover {
+	left: auto;
+	right: 30px;
+}
+.single-icon-item-10 .icon,
+.single-testimonial-item-06 .thumb{
+	margin-right:0px;
+	margin-left:20px
+}
+.single-testimonial-item-07 .thumb:before{
+	left: auto;
+	right: -30px;
+}
+.quote-box-style-01 .author-meta .thumb {
+	margin-right: 0;
+	margin-left: 30px;
+}
+.quote-box-style-01 .author-meta .content .designation {
+	text-align: right;
+	display: inherit;
+}
+.single-testimonial-item-08 .icon{
+	left: 40px;
+	right: auto !important
+}
+.single-testimonial-item-08 .thumb img{
+	left: auto !important;
+	right: 40px;
+}
+.single-testimonial-item-08 .content-area .author-meta .designation {
+	text-align: right;
+	display: inherit;
+}
+.single-portfolio-style-01 .content .cats {
+	text-align: right;
+}
+.single-icon-item-12 .content .title,
+.single-icon-item-12 .content p{
+	text-align: center;
+}
+.single-testimonial-item-09 .icon i:before,
+.single-testimonial-item-07 .content .icon i:before{
+	content: "\f10e" !important;
+}
+.single-testimonial-item-09 .icon{
+	left:auto;
+	right: 40px;
+}
+.single-testimonial-item-09 .content-area .author-meta .designation {
+	text-align: right;
+	display: block;
+}
+.single-testimonial-item-09 .content-area .ratings {
+	text-align: right;
+}
+.single-testimonial-item-04 .author-meta .designation {
+	text-align: right;
+	display: block;
+}
+.single-testimonial-item-06 .content-area .ratings {
+	text-align: right;
+}
+.single-testimonial-item-06 .content-area .author-meta .designation {
+	text-align: right;
+	display: block;
+}
+.contact-info-list-style-one .single-contact-info-item-01 .icon {
+	 margin-left: 30px;
+	 margin-right: 0;
+ }
+.single-testimonial-item-07 .content .author-meta .title {
+	text-align: right;
+	display: table;
+}
+.single-testimonial-item-07 .content .icon {
+	text-align: right;
+}
+.single-testimonial-item-08 .content-area .ratings {
+	text-align: right;
+}
+.single-blog-slider-item .thumb {
+	margin-right: 0px;
+	margin-left: 30px;
+}
+
+.single-icon-item-13 .content .title,
+.single-icon-item-13 .content p{
+	text-align: center;
+}
+.heading-title-style-02 .title span {
+	margin-right: 0;
+	margin-left: 10px;
+}
+.accordion-wrapper.style-02 .card .card-header a[aria-expanded="false"]:after {
+	left: auto;
+	right: 0;
+}
+.accordion-wrapper.style-02 .card .card-header a {
+	padding-right: 30px;
+}
+.single-icon-item-14 .icon,
+.single-icon-item-15 .icon{
+	margin-right: 0;
+	margin-left: 20px;
+}
+.single-counterup-style-04 .content .title {
+	text-align: center;
+}
+/* woocommerce */
+.wc-page-content-inner .products .aapside-single-product-item+.aapside-single-product-item{
+	margin-left: 0;
+	margin-right: 30px;
+}
+.aapside-single-product-item .product-contnent-wrap .woocommerce-loop-product__title {
+	text-align: center;
+}
+.wc-page-content-inner .products .aapside-single-product-item:nth-child(4n+1){
+	margin-right: 0;
+}
+.wc-page-content-inner .products .aapside-single-product-item:nth-child(3n+1){
+	margin-right: 0;
+}
+.aapside-single-product-item .woocommerce-thumbnail-wrap .onsale {
+	right: 0;
+	left: auto;
+}
+.woocommerce-pagination .page-numbers{
+	text-align: center;
+}
+.wc-page-content-inner .products.columns-3 .aapside-single-product-item:nth-child(4n+1) {
+	margin-left: 0px;
+}
+
+.wc-page-content-inner .products.columns-3 .aapside-single-product-item+.aapside-single-product-item{
+	margin-right: 30px;
+}
+.wc-page-content-inner .products.columns-3 .aapside-single-product-item:nth-child(3n+1) {
+	margin-left: 0px;
+	margin-right: 0px !important;
+}
+.woocommmerce-product-single-page-top-content-wrap .woocommerce-thumbnail-wrapper{
+	margin-right: 0;
+	margin-left: 30px;
+}
+.woocommmerce-product-single-page-top-content-wrap .summary.entry-summary {
+	text-align: right;
+}
+.woocommmerce-product-single-page-top-content-wrap .variations_form td.label {
+	padding-right: 0;
+	padding-left: 20px;
+}
+.single-product div.product .woocommerce-product-gallery .woocommerce-product-gallery__trigger {
+	right: auto;
+	left: 10px;
+	top: 10px;
+}
+.woocommmerce-product-single-page-top-content-wrap .woocommerce-thumbnail-wrapper .onsale{
+	left: auto;
+	right: 0px;
+}
+.aapside-product-single-page-item .woocommerce-tabs.wc-tabs-wrapper ul {
+	text-align: right;
+}
+.aapside-product-single-page-item .woocommerce-Reviews ol li .comment_container img{
+	margin-right: 0;
+	margin-left: 20px;
+}
+.aapside-product-single-page-item #review_form_wrapper .comment-respond {
+	text-align: right;
+}
+
+.aapside-product-single-page-item .related.products .products li.product+li.product {
+	margin-left: 0;
+	margin-right: 30px;
+}
+.aapside-product-single-page-item .related.products .products li.product .product-contnent-wrap .woocommerce-loop-product__title{
+	text-align: center;
+}
+@media only screen and (max-width: 767px) {
+
+	.navbar-area .navbar-collapse {
+		padding-left: 0px;
+		padding-right: 20px;
+	}
+}
+.navbar-area .nav-container .navbar-collapse .navbar-nav li.menu-item-has-children:before{
+	right: 0;
+	left: 20px;
+}
+@media screen and (min-width: 48em){
+	table.shop_table_responsive tr th, table.shop_table_responsive tr td {
+		text-align: right;
+	}
+}
+.woocommerce-cart-form td.actions button[name="update_cart"] {
+	float: left;
+}
+
+.wc-proceed-to-checkout {
+	text-align: right;
+}
+.woocommerce-checkout-review-order table th,
+.appside-page-content-area table th{
+	text-align: right;
+}
+.woocommerce-MyAccount-content{
+	padding-left: 0;
+	padding-right: 20px;
+}
+.woocommerce-EditAccountForm legend {
+	text-align: right;
+}
