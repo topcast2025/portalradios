@@ -23,6 +23,17 @@ RewriteRule ^radios/?$ endpoints/radios.php [L,QSA]
 RewriteRule ^radios/([0-9]+)/?$ endpoints/radios.php [L,QSA]
 RewriteRule ^radios/([0-9]+)/(click|statistics|report)/?$ endpoints/radios.php [L,QSA]
 RewriteRule ^upload-logo/?$ endpoints/upload.php [L,QSA]
+
+# External Radio API Routes (Radio-Browser)
+RewriteRule ^external-radios/stations/topvote/([0-9]+)/?$ endpoints/external-radios.php [L,QSA]
+RewriteRule ^external-radios/stations/search/?$ endpoints/external-radios.php [L,QSA]
+RewriteRule ^external-radios/stations/bycountry/(.+)/?$ endpoints/external-radios.php [L,QSA]
+RewriteRule ^external-radios/stations/bylanguage/(.+)/?$ endpoints/external-radios.php [L,QSA]
+RewriteRule ^external-radios/stations/bytag/(.+)/?$ endpoints/external-radios.php [L,QSA]
+RewriteRule ^external-radios/countries/?$ endpoints/external-radios.php [L,QSA]
+RewriteRule ^external-radios/languages/?$ endpoints/external-radios.php [L,QSA]
+RewriteRule ^external-radios/tags/?$ endpoints/external-radios.php [L,QSA]
+RewriteRule ^external-radios/url/(.+)/?$ endpoints/external-radios.php [L,QSA]
 RewriteRule ^external-radios/(.*)$ endpoints/external-radios.php [L,QSA]
 
 # Security - Allow access to endpoints

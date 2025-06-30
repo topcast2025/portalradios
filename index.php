@@ -17,6 +17,8 @@ header('X-XSS-Protection: 1; mode=block');
 // Verificar se a API está funcionando
 $api_status = false;
 $database_info = null;
+$external_api_status = false;
+
 try {
     if (file_exists('api/config/database.php')) {
         require_once 'api/config/database.php';
@@ -29,6 +31,16 @@ try {
     }
 } catch (Exception $e) {
     error_log("Database connection error: " . $e->getMessage());
+}
+
+// Testar API externa
+try {
+    $external_test = @file_get_contents('https://de1.api.radio-browser.info/json/stations/topvote/1', false, stream_context_create([
+        'http' => ['timeout' => 5, 'user_agent' => 'RadioWave/2.0.0']
+    ]));
+    $external_api_status = ($external_test !== false);
+} catch (Exception $e) {
+    error_log("External API test error: " . $e->getMessage());
 }
 
 // Verificar estrutura de diretórios
@@ -152,6 +164,7 @@ if (!is_dir('uploads/logos/')) {
                     <a href="#features" class="text-gray-300 hover:text-white transition-colors">Recursos</a>
                     <a href="#api" class="text-gray-300 hover:text-white transition-colors">API</a>
                     <a href="debug.php" class="text-gray-300 hover:text-purple-400 transition-colors">Diagnóstico</a>
+                    <a href="api/test-external-api.php" class="text-gray-300 hover:text-green-400 transition-colors">Teste API</a>
                 </nav>
                 
                 <!-- Status -->
@@ -188,8 +201,8 @@ if (!is_dir('uploads/logos/')) {
                 
                 <!-- Subtitle -->
                 <p class="text-xl md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
-                    Portal completo de rádios online com sistema de cadastro, API REST e interface moderna.
-                    <br>Conectando você às melhores estações do mundo.
+                    Portal completo de rádios online com mais de 30.000 estações gratuitas de todo o mundo.
+                    <br>Conectando você às melhores estações do planeta.
                 </p>
                 
                 <!-- System Status Card -->
@@ -232,17 +245,17 @@ if (!is_dir('uploads/logos/')) {
                             </div>
                         </div>
                         
-                        <!-- Upload Directory -->
+                        <!-- External API Status -->
                         <div class="p-4 bg-slate-700/30 rounded-xl">
                             <div class="flex items-center justify-between mb-2">
-                                <span class="font-medium">Upload</span>
-                                <span class="status-indicator <?php echo $uploads_writable && $logos_writable ? 'status-online' : 'status-warning'; ?>"></span>
+                                <span class="font-medium">API Externa</span>
+                                <span class="status-indicator <?php echo $external_api_status ? 'status-online' : 'status-offline'; ?>"></span>
                             </div>
-                            <div class="text-sm <?php echo $uploads_writable && $logos_writable ? 'text-green-400' : 'text-yellow-400'; ?>">
-                                <?php echo $uploads_writable && $logos_writable ? 'Configurado' : 'Verificar Permissões'; ?>
+                            <div class="text-sm <?php echo $external_api_status ? 'text-green-400' : 'text-red-400'; ?>">
+                                <?php echo $external_api_status ? 'Radio-Browser OK' : 'Offline'; ?>
                             </div>
                             <div class="text-xs text-gray-400 mt-1">
-                                Sistema de logos
+                                30.000+ estações
                             </div>
                         </div>
                         
@@ -261,7 +274,7 @@ if (!is_dir('uploads/logos/')) {
                         </div>
                     </div>
                     
-                    <?php if (!$api_status || !$uploads_writable): ?>
+                    <?php if (!$api_status || !$uploads_writable || !$external_api_status): ?>
                     <div class="mt-6 p-4 bg-red-500/20 border border-red-500/30 rounded-xl">
                         <h4 class="font-bold text-red-400 mb-2 flex items-center">
                             <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -278,6 +291,10 @@ if (!is_dir('uploads/logos/')) {
                             <li>• Diretório uploads/ sem permissão de escrita</li>
                             <li>• Execute: chmod 777 uploads/ uploads/logos/</li>
                             <?php endif; ?>
+                            <?php if (!$external_api_status): ?>
+                            <li>• API externa de rádios indisponível</li>
+                            <li>• Verifique conexão com internet</li>
+                            <?php endif; ?>
                         </ul>
                     </div>
                     <?php endif; ?>
@@ -293,6 +310,13 @@ if (!is_dir('uploads/logos/')) {
                         <span>Testar API</span>
                     </a>
                     <?php endif; ?>
+                    
+                    <a href="api/test-external-api.php" class="px-8 py-4 bg-transparent border-2 border-green-500 hover:bg-green-500 text-green-500 hover:text-white rounded-full font-semibold transition-all duration-300 inline-flex items-center justify-center space-x-3 no-underline">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        <span>Testar 30k Rádios</span>
+                    </a>
                     
                     <a href="debug.php" class="px-8 py-4 bg-transparent border-2 border-purple-500 hover:bg-purple-500 text-purple-500 hover:text-white rounded-full font-semibold transition-all duration-300 inline-flex items-center justify-center space-x-3 no-underline">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -317,6 +341,19 @@ if (!is_dir('uploads/logos/')) {
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- API Externa -->
+                    <div class="feature-card card p-8 text-center">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl mb-6">
+                            <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-white mb-4">30.000+ Rádios Gratuitas</h3>
+                        <p class="text-gray-400">
+                            Integração com Radio-Browser API oferecendo milhares de estações de rádio de todo o mundo
+                        </p>
+                    </div>
+
                     <!-- API REST -->
                     <div class="feature-card card p-8 text-center">
                         <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl mb-6">
@@ -332,7 +369,7 @@ if (!is_dir('uploads/logos/')) {
 
                     <!-- Database -->
                     <div class="feature-card card p-8 text-center">
-                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl mb-6">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl mb-6">
                             <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
                             </svg>
@@ -345,7 +382,7 @@ if (!is_dir('uploads/logos/')) {
 
                     <!-- Upload System -->
                     <div class="feature-card card p-8 text-center">
-                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl mb-6">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-2xl mb-6">
                             <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                             </svg>
@@ -371,7 +408,7 @@ if (!is_dir('uploads/logos/')) {
 
                     <!-- Statistics -->
                     <div class="feature-card card p-8 text-center">
-                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-2xl mb-6">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl mb-6">
                             <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                             </svg>
@@ -379,19 +416,6 @@ if (!is_dir('uploads/logos/')) {
                         <h3 class="text-xl font-semibold text-white mb-4">Estatísticas</h3>
                         <p class="text-gray-400">
                             Sistema automático de coleta de estatísticas quinzenais e relatórios detalhados
-                        </p>
-                    </div>
-
-                    <!-- Modern Interface -->
-                    <div class="feature-card card p-8 text-center">
-                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl mb-6">
-                            <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-semibold text-white mb-4">Interface Moderna</h3>
-                        <p class="text-gray-400">
-                            Design responsivo com Tailwind CSS, animações suaves e experiência premium
                         </p>
                     </div>
                 </div>
@@ -425,26 +449,26 @@ if (!is_dir('uploads/logos/')) {
 
                             <div class="p-4 bg-slate-700/30 rounded-xl">
                                 <div class="flex items-center justify-between mb-2">
-                                    <span class="font-mono text-blue-400">GET /api/radios</span>
-                                    <span class="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded">Lista</span>
+                                    <span class="font-mono text-blue-400">GET /api/external-radios/stations/topvote/50</span>
+                                    <span class="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded">Externa</span>
                                 </div>
-                                <p class="text-sm text-gray-400">Listar rádios com paginação e filtros</p>
+                                <p class="text-sm text-gray-400">Top 50 estações mais votadas</p>
                             </div>
 
                             <div class="p-4 bg-slate-700/30 rounded-xl">
                                 <div class="flex items-center justify-between mb-2">
-                                    <span class="font-mono text-purple-400">POST /api/radios</span>
-                                    <span class="text-xs bg-purple-500/20 text-purple-400 px-2 py-1 rounded">Criar</span>
+                                    <span class="font-mono text-purple-400">GET /api/external-radios/stations/bycountry/Brazil</span>
+                                    <span class="text-xs bg-purple-500/20 text-purple-400 px-2 py-1 rounded">Externa</span>
                                 </div>
-                                <p class="text-sm text-gray-400">Cadastrar nova rádio</p>
+                                <p class="text-sm text-gray-400">Rádios por país</p>
                             </div>
 
                             <div class="p-4 bg-slate-700/30 rounded-xl">
                                 <div class="flex items-center justify-between mb-2">
-                                    <span class="font-mono text-orange-400">POST /api/upload-logo</span>
-                                    <span class="text-xs bg-orange-500/20 text-orange-400 px-2 py-1 rounded">Upload</span>
+                                    <span class="font-mono text-orange-400">POST /api/radios</span>
+                                    <span class="text-xs bg-orange-500/20 text-orange-400 px-2 py-1 rounded">Criar</span>
                                 </div>
-                                <p class="text-sm text-gray-400">Upload de logos (max 5MB)</p>
+                                <p class="text-sm text-gray-400">Cadastrar nova rádio customizada</p>
                             </div>
                         </div>
                     </div>
@@ -453,29 +477,22 @@ if (!is_dir('uploads/logos/')) {
                     <div class="card p-8">
                         <h3 class="text-2xl font-bold text-white mb-6">Exemplo de Resposta</h3>
                         <div class="bg-slate-900/50 p-4 rounded-xl overflow-x-auto">
-                            <pre class="text-sm text-gray-300"><code>{
-  "success": true,
-  "data": {
-    "radios": [
-      {
-        "id": 1,
-        "radio_name": "Rádio Exemplo FM",
-        "stream_url": "https://exemplo.com/stream",
-        "country": "Brasil",
-        "language": "portuguese",
-        "genres": ["MPB", "Rock"],
-        "total_clicks": 150,
-        "created_at": "2024-01-01T00:00:00Z"
-      }
-    ],
-    "pagination": {
-      "page": 1,
-      "limit": 20,
-      "total": 1,
-      "totalPages": 1
-    }
+                            <pre class="text-sm text-gray-300"><code>[
+  {
+    "changeuuid": "abc123",
+    "stationuuid": "def456", 
+    "name": "Rádio Exemplo FM",
+    "url": "https://exemplo.com/stream",
+    "homepage": "https://exemplo.com",
+    "favicon": "https://exemplo.com/logo.png",
+    "tags": "music,pop,rock",
+    "country": "Brazil",
+    "language": "portuguese",
+    "votes": 150,
+    "clickcount": 1250,
+    "bitrate": 128
   }
-}</code></pre>
+]</code></pre>
                         </div>
                     </div>
                 </div>
@@ -526,14 +543,14 @@ if (!is_dir('uploads/logos/')) {
                         </div>
                     </div>
                     
-                    <!-- Status -->
+                    <!-- External API -->
                     <div class="card p-6 text-center">
-                        <div class="text-3xl font-bold <?php echo $api_status ? 'text-green-400' : 'text-red-400'; ?> mb-2">
-                            <?php echo $api_status ? '100%' : '0%'; ?>
+                        <div class="text-3xl font-bold <?php echo $external_api_status ? 'text-green-400' : 'text-red-400'; ?> mb-2">
+                            30K+
                         </div>
-                        <div class="text-gray-400">Operacional</div>
+                        <div class="text-gray-400">Rádios Externas</div>
                         <div class="text-xs text-gray-500 mt-1">
-                            Sistema <?php echo $api_status ? 'Online' : 'Offline'; ?>
+                            Radio-Browser API
                         </div>
                     </div>
                 </div>
@@ -556,7 +573,7 @@ if (!is_dir('uploads/logos/')) {
                         <span class="text-xl font-bold text-gradient">RadioWave</span>
                     </div>
                     <p class="text-gray-400 mb-4">
-                        Portal completo de rádios online com sistema de cadastro, API REST e interface moderna.
+                        Portal completo de rádios online com mais de 30.000 estações gratuitas de todo o mundo.
                     </p>
                 </div>
 
@@ -565,8 +582,9 @@ if (!is_dir('uploads/logos/')) {
                     <h3 class="text-lg font-semibold text-white mb-4">Links Úteis</h3>
                     <ul class="space-y-2">
                         <li><a href="api/endpoints/health.php" class="text-gray-400 hover:text-purple-400 transition-colors">Health Check</a></li>
-                        <li><a href="api/endpoints/radios.php" class="text-gray-400 hover:text-purple-400 transition-colors">API Rádios</a></li>
+                        <li><a href="api/test-external-api.php" class="text-gray-400 hover:text-purple-400 transition-colors">Teste API Externa</a></li>
                         <li><a href="debug.php" class="text-gray-400 hover:text-purple-400 transition-colors">Diagnóstico</a></li>
+                        <li><a href="cadastro-radio.php" class="text-gray-400 hover:text-purple-400 transition-colors">Cadastrar Rádio</a></li>
                     </ul>
                 </div>
 
@@ -578,13 +596,14 @@ if (!is_dir('uploads/logos/')) {
                         <li>MySQL <?php echo $database_info['mysql_version'] ?? 'N/A'; ?></li>
                         <li><?php echo $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown Server'; ?></li>
                         <li>Status: <span class="<?php echo $api_status ? 'text-green-400' : 'text-red-400'; ?>"><?php echo $api_status ? 'Online' : 'Offline'; ?></span></li>
+                        <li>API Externa: <span class="<?php echo $external_api_status ? 'text-green-400' : 'text-red-400'; ?>"><?php echo $external_api_status ? 'Online' : 'Offline'; ?></span></li>
                     </ul>
                 </div>
             </div>
 
             <div class="border-t border-slate-800 mt-8 pt-8 text-center">
                 <p class="text-gray-400">
-                    © 2024 RadioWave. Portal de Rádios Online - Sistema completo em PHP.
+                    © 2024 RadioWave. Portal de Rádios Online - Sistema completo em PHP com 30.000+ estações gratuitas.
                 </p>
             </div>
         </div>
@@ -599,4 +618,3 @@ if (!is_dir('uploads/logos/')) {
     </button>
 </body>
 </html>
-```
