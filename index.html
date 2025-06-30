@@ -54,25 +54,6 @@
             box-shadow: 0 10px 25px rgba(147, 51, 234, 0.4);
         }
         
-        .status-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
-        }
-        
-        .status-online { background-color: #10b981; }
-        .status-offline { background-color: #ef4444; }
-        .status-warning { background-color: #f59e0b; }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        
-        .pulse { animation: pulse 2s infinite; }
-        
         .feature-card {
             transition: all 0.3s ease;
         }
@@ -126,10 +107,8 @@
                 <!-- Status -->
                 <div class="flex items-center space-x-4">
                     <div class="flex items-center text-sm">
-                        <span class="status-indicator status-warning pulse"></span>
-                        <span class="text-yellow-400" id="system-status">
-                            Verificando...
-                        </span>
+                        <span class="w-3 h-3 bg-yellow-400 rounded-full mr-2 animate-pulse"></span>
+                        <span class="text-yellow-400" id="system-status">Verificando...</span>
                     </div>
                 </div>
             </div>
@@ -157,8 +136,8 @@
                 
                 <!-- Subtitle -->
                 <p class="text-xl md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
-                    Portal completo de rádios online com sistema de cadastro, API REST e interface moderna.
-                    <br>Conectando você às melhores estações do mundo.
+                    Portal completo de rádios online com <strong>milhares de estações</strong> de todo o mundo.
+                    <br>Sua música favorita está a um clique de distância.
                 </p>
                 
                 <!-- System Status Card -->
@@ -187,18 +166,18 @@
                 
                 <!-- Actions -->
                 <div class="flex flex-col sm:flex-row gap-6 justify-center" id="action-buttons">
-                    <button onclick="checkSystemStatus()" class="btn-primary text-lg px-8 py-4 rounded-full font-semibold inline-flex items-center justify-center space-x-3 text-white">
+                    <a href="radio-player.html" class="btn-primary text-lg px-8 py-4 rounded-full font-semibold inline-flex items-center justify-center space-x-3 text-white no-underline">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h1m4 0h1m6-4a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
-                        <span>Verificar Sistema</span>
-                    </button>
+                        <span>🎵 Ouvir Rádios Online</span>
+                    </a>
                     
                     <a href="debug.php" class="px-8 py-4 bg-transparent border-2 border-purple-500 hover:bg-purple-500 text-purple-500 hover:text-white rounded-full font-semibold transition-all duration-300 inline-flex items-center justify-center space-x-3 no-underline">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
-                        <span>Diagnóstico Completo</span>
+                        <span>Diagnóstico</span>
                     </a>
                 </div>
             </div>
@@ -212,11 +191,24 @@
                         Recursos do <span class="text-gradient">Sistema</span>
                     </h2>
                     <p class="text-xl text-gray-400 max-w-3xl mx-auto">
-                        Uma plataforma completa para gerenciar e descobrir rádios online
+                        Acesso a milhares de rádios online + sistema de cadastro personalizado
                     </p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Milhares de Rádios -->
+                    <div class="feature-card card p-8 text-center">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl mb-6">
+                            <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-white mb-4">50.000+ Rádios Online</h3>
+                        <p class="text-gray-400">
+                            Acesso direto à maior base de dados de rádios online do mundo via Radio-Browser API
+                        </p>
+                    </div>
+
                     <!-- API REST -->
                     <div class="feature-card card p-8 text-center">
                         <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl mb-6">
@@ -224,65 +216,52 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-semibold text-white mb-4">API REST Completa</h3>
+                        <h3 class="text-xl font-semibold text-white mb-4">API REST Unificada</h3>
                         <p class="text-gray-400">
-                            Endpoints para CRUD de rádios, upload de logos, estatísticas e relatórios de erro
+                            Busca unificada combinando rádios externas com rádios customizadas cadastradas
                         </p>
                     </div>
 
-                    <!-- Database -->
-                    <div class="feature-card card p-8 text-center">
-                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl mb-6">
-                            <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-semibold text-white mb-4">Banco MySQL</h3>
-                        <p class="text-gray-400">
-                            Estrutura robusta com tabelas para rádios, estatísticas, cliques e relatórios
-                        </p>
-                    </div>
-
-                    <!-- Upload System -->
+                    <!-- Cadastro Personalizado -->
                     <div class="feature-card card p-8 text-center">
                         <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl mb-6">
                             <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-semibold text-white mb-4">Sistema de Upload</h3>
+                        <h3 class="text-xl font-semibold text-white mb-4">Cadastro Personalizado</h3>
                         <p class="text-gray-400">
-                            Upload seguro de logos com processamento automático e redimensionamento
+                            Sistema próprio para cadastrar rádios locais com logos, descrições e redes sociais
                         </p>
                     </div>
 
-                    <!-- Security -->
+                    <!-- Player Integrado -->
                     <div class="feature-card card p-8 text-center">
                         <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-red-500 to-pink-500 rounded-2xl mb-6">
                             <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h1m4 0h1m6-4a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-semibold text-white mb-4">Segurança</h3>
+                        <h3 class="text-xl font-semibold text-white mb-4">Player Integrado</h3>
                         <p class="text-gray-400">
-                            Headers de segurança, validação de dados, sanitização e proteção contra ataques
+                            Player de áudio moderno com visualizador e controles avançados
                         </p>
                     </div>
 
-                    <!-- Statistics -->
+                    <!-- Busca Avançada -->
                     <div class="feature-card card p-8 text-center">
                         <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-2xl mb-6">
                             <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-semibold text-white mb-4">Estatísticas</h3>
+                        <h3 class="text-xl font-semibold text-white mb-4">Busca Avançada</h3>
                         <p class="text-gray-400">
-                            Sistema automático de coleta de estatísticas quinzenais e relatórios detalhados
+                            Filtros por país, gênero, idioma e busca textual em tempo real
                         </p>
                     </div>
 
-                    <!-- Modern Interface -->
+                    <!-- Interface Moderna -->
                     <div class="feature-card card p-8 text-center">
                         <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl mb-6">
                             <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -291,7 +270,7 @@
                         </div>
                         <h3 class="text-xl font-semibold text-white mb-4">Interface Moderna</h3>
                         <p class="text-gray-400">
-                            Design responsivo com Tailwind CSS, animações suaves e experiência premium
+                            Design responsivo com Tailwind CSS e experiência de usuário premium
                         </p>
                     </div>
                 </div>
@@ -303,48 +282,56 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16">
                     <h2 class="text-4xl font-bold text-white mb-6">
-                        Documentação da <span class="text-gradient">API</span>
+                        API <span class="text-gradient">Endpoints</span>
                     </h2>
                     <p class="text-xl text-gray-400">
-                        Endpoints disponíveis para integração
+                        Acesso programático a milhares de rádios online
                     </p>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <!-- Endpoints List -->
                     <div class="card p-8">
-                        <h3 class="text-2xl font-bold text-white mb-6">Endpoints Principais</h3>
+                        <h3 class="text-2xl font-bold text-white mb-6">Endpoints Disponíveis</h3>
                         <div class="space-y-4">
                             <div class="p-4 bg-slate-700/30 rounded-xl">
                                 <div class="flex items-center justify-between mb-2">
-                                    <span class="font-mono text-green-400">GET /api/health</span>
-                                    <span class="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">Status</span>
+                                    <span class="font-mono text-green-400">GET /api/popular</span>
+                                    <span class="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">Populares</span>
                                 </div>
-                                <p class="text-sm text-gray-400">Verificação de saúde do sistema</p>
+                                <p class="text-sm text-gray-400">Rádios mais populares (externas + customizadas)</p>
                             </div>
 
                             <div class="p-4 bg-slate-700/30 rounded-xl">
                                 <div class="flex items-center justify-between mb-2">
-                                    <span class="font-mono text-blue-400">GET /api/radios</span>
-                                    <span class="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded">Lista</span>
+                                    <span class="font-mono text-blue-400">GET /api/search</span>
+                                    <span class="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded">Busca</span>
                                 </div>
-                                <p class="text-sm text-gray-400">Listar rádios com paginação e filtros</p>
+                                <p class="text-sm text-gray-400">Busca unificada com filtros avançados</p>
                             </div>
 
                             <div class="p-4 bg-slate-700/30 rounded-xl">
                                 <div class="flex items-center justify-between mb-2">
-                                    <span class="font-mono text-purple-400">POST /api/radios</span>
-                                    <span class="text-xs bg-purple-500/20 text-purple-400 px-2 py-1 rounded">Criar</span>
+                                    <span class="font-mono text-purple-400">GET /api/countries</span>
+                                    <span class="text-xs bg-purple-500/20 text-purple-400 px-2 py-1 rounded">Países</span>
                                 </div>
-                                <p class="text-sm text-gray-400">Cadastrar nova rádio</p>
+                                <p class="text-sm text-gray-400">Lista de países com contadores</p>
                             </div>
 
                             <div class="p-4 bg-slate-700/30 rounded-xl">
                                 <div class="flex items-center justify-between mb-2">
-                                    <span class="font-mono text-orange-400">POST /api/upload-logo</span>
-                                    <span class="text-xs bg-orange-500/20 text-orange-400 px-2 py-1 rounded">Upload</span>
+                                    <span class="font-mono text-orange-400">GET /api/genres</span>
+                                    <span class="text-xs bg-orange-500/20 text-orange-400 px-2 py-1 rounded">Gêneros</span>
                                 </div>
-                                <p class="text-sm text-gray-400">Upload de logos (max 5MB)</p>
+                                <p class="text-sm text-gray-400">Gêneros musicais disponíveis</p>
+                            </div>
+
+                            <div class="p-4 bg-slate-700/30 rounded-xl">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="font-mono text-pink-400">GET /api/external-radios/*</span>
+                                    <span class="text-xs bg-pink-500/20 text-pink-400 px-2 py-1 rounded">Proxy</span>
+                                </div>
+                                <p class="text-sm text-gray-400">Proxy para Radio-Browser API</p>
                             </div>
                         </div>
                     </div>
@@ -356,76 +343,30 @@
                             <pre class="text-sm text-gray-300"><code>{
   "success": true,
   "data": {
-    "radios": [
+    "popular_radios": [
       {
-        "id": 1,
-        "radio_name": "Rádio Exemplo FM",
-        "stream_url": "https://exemplo.com/stream",
+        "name": "BBC Radio 1",
+        "url": "https://stream.live.vc.bbcmedia.co.uk/bbc_radio_one",
+        "country": "United Kingdom",
+        "votes": 15420,
+        "source": "external"
+      },
+      {
+        "radio_name": "Rádio Local FM",
+        "stream_url": "https://local.fm/stream",
         "country": "Brasil",
-        "language": "portuguese",
-        "genres": ["MPB", "Rock"],
-        "total_clicks": 150,
-        "created_at": "2024-01-01T00:00:00Z"
+        "total_clicks": 1250,
+        "source": "custom"
       }
     ],
-    "pagination": {
-      "page": 1,
-      "limit": 20,
-      "total": 1,
-      "totalPages": 1
+    "total": 50,
+    "stats": {
+      "external_count": 35,
+      "custom_count": 15
     }
   }
 }</code></pre>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Installation Section -->
-        <section class="py-20">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl font-bold text-white mb-4">Configuração do Sistema</h2>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Installation Card -->
-                    <div class="card p-8 text-center">
-                        <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-2xl font-bold text-white mb-4">Instalação Automática</h3>
-                        <p class="text-gray-400 mb-6">
-                            Configure o sistema completo em poucos cliques com nosso instalador automático
-                        </p>
-                        <a href="install/" class="btn-primary text-lg px-8 py-4 rounded-full font-semibold inline-flex items-center justify-center space-x-3 text-white no-underline">
-                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                            </svg>
-                            <span>Instalar Sistema</span>
-                        </a>
-                    </div>
-
-                    <!-- Manual Setup Card -->
-                    <div class="card p-8 text-center">
-                        <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-2xl font-bold text-white mb-4">Configuração Manual</h3>
-                        <p class="text-gray-400 mb-6">
-                            Configure manualmente o banco de dados e arquivos de configuração
-                        </p>
-                        <a href="cadastro-radio.php" class="px-8 py-4 bg-transparent border-2 border-green-500 hover:bg-green-500 text-green-500 hover:text-white rounded-full font-semibold transition-all duration-300 inline-flex items-center justify-center space-x-3 no-underline">
-                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                            </svg>
-                            <span>Cadastrar Rádio</span>
-                        </a>
                     </div>
                 </div>
             </div>
@@ -447,7 +388,7 @@
                         <span class="text-xl font-bold text-gradient">RadioWave</span>
                     </div>
                     <p class="text-gray-400 mb-4">
-                        Portal completo de rádios online com sistema de cadastro, API REST e interface moderna.
+                        Portal completo com milhares de rádios online + sistema de cadastro personalizado.
                     </p>
                 </div>
 
@@ -455,10 +396,10 @@
                 <div>
                     <h3 class="text-lg font-semibold text-white mb-4">Links Úteis</h3>
                     <ul class="space-y-2">
-                        <li><a href="api/health" class="text-gray-400 hover:text-purple-400 transition-colors">Health Check</a></li>
-                        <li><a href="api/radios" class="text-gray-400 hover:text-purple-400 transition-colors">API Rádios</a></li>
+                        <li><a href="radio-player.html" class="text-gray-400 hover:text-purple-400 transition-colors">🎵 Player de Rádios</a></li>
+                        <li><a href="api/popular" class="text-gray-400 hover:text-purple-400 transition-colors">API Populares</a></li>
+                        <li><a href="api/countries" class="text-gray-400 hover:text-purple-400 transition-colors">API Países</a></li>
                         <li><a href="debug.php" class="text-gray-400 hover:text-purple-400 transition-colors">Diagnóstico</a></li>
-                        <li><a href="install/" class="text-gray-400 hover:text-purple-400 transition-colors">Instalador</a></li>
                     </ul>
                 </div>
 
@@ -466,26 +407,21 @@
                 <div>
                     <h3 class="text-lg font-semibold text-white mb-4">Sistema</h3>
                     <ul class="space-y-2 text-sm text-gray-400" id="footer-system-info">
-                        <li>Carregando informações...</li>
+                        <li>🌐 50.000+ Rádios Online</li>
+                        <li>🎵 Player Integrado</li>
+                        <li>🔍 Busca Avançada</li>
+                        <li>📡 API REST Completa</li>
                     </ul>
                 </div>
             </div>
 
             <div class="border-t border-slate-800 mt-8 pt-8 text-center">
                 <p class="text-gray-400">
-                    © 2024 RadioWave. Portal de Rádios Online - Sistema completo em PHP.
+                    © 2024 RadioWave. Portal de Rádios Online com integração Radio-Browser API.
                 </p>
             </div>
         </div>
     </footer>
-
-    <!-- Scroll to Top Button -->
-    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" 
-            class="fixed bottom-8 right-8 p-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 neon-glow">
-        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-        </svg>
-    </button>
 
     <!-- JavaScript -->
     <script>
@@ -493,58 +429,47 @@
         async function checkSystemStatus() {
             const statusElement = document.getElementById('system-status');
             const gridElement = document.getElementById('system-status-grid');
-            const problemsElement = document.getElementById('system-problems');
             
             statusElement.textContent = 'Verificando...';
             statusElement.className = 'text-yellow-400';
             
             try {
-                // Teste 1: Health Check
-                let healthData = null;
-                try {
-                    const healthResponse = await fetch('api/health');
-                    healthData = await healthResponse.json();
-                } catch (e) {
-                    console.log('Health API não disponível');
-                }
-
-                // Teste 2: Verificar se é PHP ou HTML
-                const isPhpWorking = healthData && healthData.status;
+                // Teste da API de rádios populares
+                const popularResponse = await fetch('/api/popular?limit=5');
+                const popularData = await popularResponse.json();
                 
-                // Teste 3: Verificar estrutura de arquivos
-                const hasInstaller = await checkFileExists('install/');
-                const hasDebug = await checkFileExists('debug.php');
-                const hasAPI = await checkFileExists('api/');
+                // Teste da API de países
+                const countriesResponse = await fetch('/api/countries');
+                const countriesData = await countriesResponse.json();
+                
+                // Teste da API de gêneros
+                const genresResponse = await fetch('/api/genres?limit=10');
+                const genresData = await genresResponse.json();
 
                 // Atualizar grid de status
                 updateStatusGrid({
-                    php: isPhpWorking,
-                    api: healthData && healthData.status === 'OK',
-                    database: healthData && healthData.database && healthData.database.status === 'connected',
-                    files: hasAPI && hasDebug
+                    radios_api: popularData.success,
+                    countries_api: countriesData.success,
+                    genres_api: genresData.success,
+                    total_radios: popularData.success ? popularData.data.total : 0,
+                    total_countries: countriesData.success ? countriesData.data.total : 0,
+                    total_genres: genresData.success ? genresData.data.total : 0
                 });
 
                 // Atualizar status geral
-                if (isPhpWorking && healthData.status === 'OK') {
+                if (popularData.success && countriesData.success && genresData.success) {
                     statusElement.textContent = 'Sistema Online';
                     statusElement.className = 'text-green-400';
-                } else if (!isPhpWorking) {
-                    statusElement.textContent = 'PHP não configurado';
-                    statusElement.className = 'text-red-400';
-                    showPhpProblem();
                 } else {
                     statusElement.textContent = 'Problemas detectados';
                     statusElement.className = 'text-yellow-400';
                 }
 
-                // Atualizar footer
-                updateFooterInfo(healthData);
-
             } catch (error) {
                 console.error('Erro ao verificar status:', error);
                 statusElement.textContent = 'Erro na verificação';
                 statusElement.className = 'text-red-400';
-                showPhpProblem();
+                showApiProblem();
             }
         }
 
@@ -553,47 +478,47 @@
             grid.innerHTML = `
                 <div class="p-4 bg-slate-700/30 rounded-xl">
                     <div class="flex items-center justify-between mb-2">
-                        <span class="font-medium">PHP</span>
-                        <span class="status-indicator ${status.php ? 'status-online' : 'status-offline'}"></span>
+                        <span class="font-medium">API Rádios</span>
+                        <span class="w-3 h-3 rounded-full ${status.radios_api ? 'bg-green-400' : 'bg-red-400'}"></span>
                     </div>
-                    <div class="text-sm ${status.php ? 'text-green-400' : 'text-red-400'}">
-                        ${status.php ? 'Funcionando' : 'Não configurado'}
-                    </div>
-                </div>
-                
-                <div class="p-4 bg-slate-700/30 rounded-xl">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="font-medium">API</span>
-                        <span class="status-indicator ${status.api ? 'status-online' : 'status-offline'}"></span>
-                    </div>
-                    <div class="text-sm ${status.api ? 'text-green-400' : 'text-red-400'}">
-                        ${status.api ? 'Disponível' : 'Indisponível'}
+                    <div class="text-sm ${status.radios_api ? 'text-green-400' : 'text-red-400'}">
+                        ${status.radios_api ? `${status.total_radios} rádios` : 'Indisponível'}
                     </div>
                 </div>
                 
                 <div class="p-4 bg-slate-700/30 rounded-xl">
                     <div class="flex items-center justify-between mb-2">
-                        <span class="font-medium">Banco</span>
-                        <span class="status-indicator ${status.database ? 'status-online' : 'status-offline'}"></span>
+                        <span class="font-medium">Países</span>
+                        <span class="w-3 h-3 rounded-full ${status.countries_api ? 'bg-green-400' : 'bg-red-400'}"></span>
                     </div>
-                    <div class="text-sm ${status.database ? 'text-green-400' : 'text-red-400'}">
-                        ${status.database ? 'Conectado' : 'Desconectado'}
+                    <div class="text-sm ${status.countries_api ? 'text-green-400' : 'text-red-400'}">
+                        ${status.countries_api ? `${status.total_countries} países` : 'Indisponível'}
                     </div>
                 </div>
                 
                 <div class="p-4 bg-slate-700/30 rounded-xl">
                     <div class="flex items-center justify-between mb-2">
-                        <span class="font-medium">Arquivos</span>
-                        <span class="status-indicator ${status.files ? 'status-online' : 'status-warning'}"></span>
+                        <span class="font-medium">Gêneros</span>
+                        <span class="w-3 h-3 rounded-full ${status.genres_api ? 'bg-green-400' : 'bg-red-400'}"></span>
                     </div>
-                    <div class="text-sm ${status.files ? 'text-green-400' : 'text-yellow-400'}">
-                        ${status.files ? 'OK' : 'Verificar'}
+                    <div class="text-sm ${status.genres_api ? 'text-green-400' : 'text-red-400'}">
+                        ${status.genres_api ? `${status.total_genres} gêneros` : 'Indisponível'}
+                    </div>
+                </div>
+                
+                <div class="p-4 bg-slate-700/30 rounded-xl">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-medium">Player</span>
+                        <span class="w-3 h-3 rounded-full bg-green-400"></span>
+                    </div>
+                    <div class="text-sm text-green-400">
+                        Disponível
                     </div>
                 </div>
             `;
         }
 
-        function showPhpProblem() {
+        function showApiProblem() {
             const problemsElement = document.getElementById('system-problems');
             problemsElement.className = 'mt-6 p-4 bg-red-500/20 border border-red-500/30 rounded-xl';
             problemsElement.innerHTML = `
@@ -601,46 +526,20 @@
                     <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
                     </svg>
-                    Problema Detectado: PHP não está funcionando
+                    Problema na API de Rádios
                 </h4>
                 <ul class="text-sm text-red-300 space-y-1">
-                    <li>• O servidor não está interpretando arquivos PHP</li>
-                    <li>• Verifique se o PHP está instalado e configurado</li>
-                    <li>• Certifique-se de que o servidor web suporta PHP</li>
-                    <li>• Use o instalador automático para configurar o sistema</li>
+                    <li>• A API de rádios externas pode estar temporariamente indisponível</li>
+                    <li>• Verifique sua conexão com a internet</li>
+                    <li>• O player ainda funciona com rádios customizadas</li>
                 </ul>
                 <div class="mt-4">
-                    <a href="install/" class="inline-block px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-all">
-                        Usar Instalador Automático
-                    </a>
+                    <button onclick="checkSystemStatus()" class="inline-block px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-all">
+                        Tentar Novamente
+                    </button>
                 </div>
             `;
-        }
-
-        function updateFooterInfo(healthData) {
-            const footerInfo = document.getElementById('footer-system-info');
-            if (healthData && healthData.php) {
-                footerInfo.innerHTML = `
-                    <li>PHP ${healthData.php.version}</li>
-                    <li>${healthData.server?.software || 'Servidor Web'}</li>
-                    <li>Status: <span class="${healthData.status === 'OK' ? 'text-green-400' : 'text-red-400'}">${healthData.status === 'OK' ? 'Online' : 'Offline'}</span></li>
-                `;
-            } else {
-                footerInfo.innerHTML = `
-                    <li>PHP: Não detectado</li>
-                    <li>Servidor: Configuração necessária</li>
-                    <li>Status: <span class="text-red-400">Requer configuração</span></li>
-                `;
-            }
-        }
-
-        async function checkFileExists(path) {
-            try {
-                const response = await fetch(path, { method: 'HEAD' });
-                return response.ok;
-            } catch {
-                return false;
-            }
+            problemsElement.classList.remove('hidden');
         }
 
         // Verificar status automaticamente ao carregar
