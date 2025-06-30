@@ -2,14 +2,16 @@
 import axios from 'axios'
 import { CustomRadio, RadioRegistrationData, RadioStatistics } from '../types/customRadio'
 
-const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://wave.soradios.online/api' 
-  : 'http://localhost:3001/api'
+// Usar a URL do servidor hospedado
+const API_BASE_URL = 'https://wave.soradios.online/api'
 
 class CustomRadioAPI {
   private api = axios.create({
     baseURL: API_BASE_URL,
     timeout: 10000,
+    headers: {
+      'User-Agent': 'RadioWave/2.0.0'
+    }
   })
 
   // Registrar nova rádio

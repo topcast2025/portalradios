@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Radio, TrendingUp, Globe, Music, Headphones, Star, Play, Zap, Users, Waves, Info } from 'lucide-react'
+import { Radio, TrendingUp, Globe, Music, Headphones, Star, Play, Zap, Users, Waves, Info, AlertCircle } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { radioAPI } from '../services/radioApi'
 import { RadioStation } from '../types/radio'
@@ -10,6 +10,7 @@ import toast from 'react-hot-toast'
 const Home: React.FC = () => {
   const [topStations, setTopStations] = useState<RadioStation[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     loadTopStations()
@@ -18,11 +19,13 @@ const Home: React.FC = () => {
   const loadTopStations = async () => {
     try {
       setLoading(true)
+      setError(null)
       const stations = await radioAPI.getTopStations(12)
       setTopStations(stations)
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Error loading top stations:', error)
+      setError(error.message || 'Erro ao carregar estações populares')
       toast.error('Erro ao carregar estações populares')
-      console.error(error)
     } finally {
       setLoading(false)
     }
@@ -56,10 +59,10 @@ const Home: React.FC = () => {
   ]
 
   const stats = [
-    { number: '50K+', label: 'Estações', icon: Radio },
+    { number: '30K+', label: 'Estações', icon: Radio },
     { number: '200+', label: 'Países', icon: Globe },
     { number: '24/7', label: 'Online', icon: Zap },
-    { number: '1M+', label: 'Usuários', icon: Users }
+    { number: 'Grátis', label: 'Sempre', icon: Users }
   ]
 
   return (
@@ -120,11 +123,11 @@ const Home: React.FC = () => {
             </div>
 
             <h1 className="text-6xl md:text-8xl font-bold mb-8">
-              <span className="text-gradient">Radion</span>
+              <span className="text-gradient">RadioWave</span>
             </h1>
             
             <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
-              Descubra e ouça milhares de rádios online de todo o mundo. 
+              Descubra e ouça mais de 30.000 rádios online gratuitas de todo o mundo. 
               Sua música favorita está a um clique de distância.
             </p>
             
@@ -181,7 +184,7 @@ const Home: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Por que escolher o <span className="text-gradient">Radion</span>?
+              Por que escolher o <span className="text-gradient">RadioWave</span>?
             </h2>
             <p className="text-xl text-gray-400 max-w-3xl mx-auto">
               A melhor experiência de rádio online com recursos incríveis
@@ -228,13 +231,39 @@ const Home: React.FC = () => {
                 As rádios mais ouvidas pelos nossos usuários
               </p>
             </div>
-            <Link
-              to="/browse"
-              className="btn-primary"
-            >
-              Ver Todas
-            </Link>
+            <div className="flex space-x-4">
+              <button
+                onClick={loadTopStations}
+                className="px-6 py-3 bg-slate-700/50 hover:bg-slate-600/50 text-white rounded-xl transition-colors"
+              >
+                Atualizar
+              </button>
+              <Link
+                to="/browse"
+                className="btn-primary"
+              >
+                Ver Todas
+              </Link>
+            </div>
           </div>
+
+          {error && (
+            <div className="mb-8 p-6 bg-red-500/20 border border-red-500/30 rounded-xl">
+              <div className="flex items-center space-x-3 text-red-400">
+                <AlertCircle className="h-6 w-6" />
+                <div>
+                  <h3 className="font-semibold">Erro ao carregar estações</h3>
+                  <p className="text-sm">{error}</p>
+                  <button
+                    onClick={loadTopStations}
+                    className="mt-2 text-sm underline hover:no-underline"
+                  >
+                    Tentar novamente
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {loading ? (
             <div className="station-grid">
@@ -257,7 +286,7 @@ const Home: React.FC = () => {
                 </div>
               ))}
             </div>
-          ) : (
+          ) : topStations.length > 0 ? (
             <div className="station-grid">
               {topStations.map((station, index) => (
                 <RadioCard
@@ -266,6 +295,24 @@ const Home: React.FC = () => {
                   index={index}
                 />
               ))}
+            </div>
+          ) : (
+            <div className="text-center py-20">
+              <div className="inline-flex items-center justify-center w-24 h-24 bg-slate-800/50 rounded-3xl mb-8">
+                <Radio className="h-12 w-12 text-gray-400" />
+              </div>
+              <h3 className="text-2xl font-semibold text-white mb-4">
+                Nenhuma estação encontrada
+              </h3>
+              <p className="text-gray-400 mb-8">
+                Não foi possível carregar as estações populares no momento
+              </p>
+              <button
+                onClick={loadTopStations}
+                className="btn-primary"
+              >
+                Tentar Novamente
+              </button>
             </div>
           )}
         </div>

@@ -1,14 +1,16 @@
 import axios from 'axios'
 import { RadioStation, SearchFilters } from '../types/radio'
 
-const BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://wave.soradios.online/api/external-radios' 
-  : 'http://localhost:3001/api/external-radios'
+// Usar a URL do servidor hospedado em produção
+const BASE_URL = 'https://wave.soradios.online/api/external-radios'
 
 class RadioAPI {
   private api = axios.create({
     baseURL: BASE_URL,
     timeout: 15000,
+    headers: {
+      'User-Agent': 'RadioWave/2.0.0'
+    }
   })
 
   async getTopStations(limit: number = 50): Promise<RadioStation[]> {
