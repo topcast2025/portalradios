@@ -6,7 +6,7 @@
 
 // Configurações de erro para desenvolvimento
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', 0); // Desabilitar em produção
 ini_set('log_errors', 1);
 
 // Headers de segurança
@@ -16,14 +16,31 @@ header('X-XSS-Protection: 1; mode=block');
 
 // Verificar se a API está funcionando
 $api_status = false;
+$database_info = null;
 try {
     if (file_exists('api/config/database.php')) {
         require_once 'api/config/database.php';
         $database = new Database();
         $api_status = $database->testConnection();
+        if ($api_status) {
+            $diagnostic = $database->getDiagnosticInfo();
+            $database_info = $diagnostic['success'] ? $diagnostic['data'] : null;
+        }
     }
 } catch (Exception $e) {
     error_log("Database connection error: " . $e->getMessage());
+}
+
+// Verificar estrutura de diretórios
+$uploads_writable = is_writable('uploads/');
+$logos_writable = is_writable('uploads/logos/');
+
+// Criar diretórios se não existirem
+if (!is_dir('uploads/')) {
+    @mkdir('uploads/', 0777, true);
+}
+if (!is_dir('uploads/logos/')) {
+    @mkdir('uploads/logos/', 0777, true);
 }
 ?>
 <!DOCTYPE html>
@@ -92,6 +109,7 @@ try {
         
         .status-online { background-color: #10b981; }
         .status-offline { background-color: #ef4444; }
+        .status-warning { background-color: #f59e0b; }
         
         @keyframes pulse {
             0%, 100% { opacity: 1; }
@@ -99,6 +117,15 @@ try {
         }
         
         .pulse { animation: pulse 2s infinite; }
+        
+        .feature-card {
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(147, 51, 234, 0.2);
+        }
     </style>
 </head>
 <body class="text-white">
@@ -115,9 +142,17 @@ try {
                     </div>
                     <div>
                         <span class="text-2xl font-bold text-gradient">RadioWave</span>
-                        <div class="text-sm text-purple-400">Online Radio</div>
+                        <div class="text-sm text-purple-400">Online Radio Portal</div>
                     </div>
                 </div>
+                
+                <!-- Navigation -->
+                <nav class="hidden md:flex space-x-6">
+                    <a href="#home" class="text-gray-300 hover:text-white transition-colors">Início</a>
+                    <a href="#features" class="text-gray-300 hover:text-white transition-colors">Recursos</a>
+                    <a href="#api" class="text-gray-300 hover:text-white transition-colors">API</a>
+                    <a href="debug.php" class="text-gray-300 hover:text-purple-400 transition-colors">Diagnóstico</a>
+                </nav>
                 
                 <!-- Status -->
                 <div class="flex items-center space-x-4">
@@ -133,10 +168,10 @@ try {
     </header>
 
     <!-- Main Content -->
-    <main class="pt-20">
+    <main class="pt-20" id="home">
         <!-- Hero Section -->
         <section class="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
-            <div class="max-w-4xl mx-auto text-center">
+            <div class="max-w-6xl mx-auto text-center">
                 <!-- Logo Icon -->
                 <div class="mb-8">
                     <div class="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl mb-8 neon-glow">
@@ -153,59 +188,95 @@ try {
                 
                 <!-- Subtitle -->
                 <p class="text-xl md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
-                    Descubra e ouça milhares de rádios online de todo o mundo. 
-                    Sua música favorita está a um clique de distância.
+                    Portal completo de rádios online com sistema de cadastro, API REST e interface moderna.
+                    <br>Conectando você às melhores estações do mundo.
                 </p>
                 
-                <!-- System Status -->
-                <div class="card p-8 mb-12 max-w-2xl mx-auto">
-                    <h3 class="text-2xl font-bold mb-6">Status do Sistema</h3>
+                <!-- System Status Card -->
+                <div class="card p-8 mb-12 max-w-4xl mx-auto">
+                    <h3 class="text-2xl font-bold mb-6 flex items-center justify-center">
+                        <svg class="h-6 w-6 mr-3 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Status do Sistema
+                    </h3>
                     
-                    <div class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <!-- Database Status -->
-                        <div class="flex items-center justify-between p-4 bg-slate-700/30 rounded-xl">
-                            <div class="flex items-center">
-                                <span class="status-indicator <?php echo $api_status ? 'status-online' : 'status-offline'; ?>"></span>
+                        <div class="p-4 bg-slate-700/30 rounded-xl">
+                            <div class="flex items-center justify-between mb-2">
                                 <span class="font-medium">Banco de Dados</span>
+                                <span class="status-indicator <?php echo $api_status ? 'status-online' : 'status-offline'; ?>"></span>
                             </div>
-                            <span class="<?php echo $api_status ? 'text-green-400' : 'text-red-400'; ?>">
+                            <div class="text-sm <?php echo $api_status ? 'text-green-400' : 'text-red-400'; ?>">
                                 <?php echo $api_status ? 'Conectado' : 'Erro de Conexão'; ?>
-                            </span>
+                            </div>
+                            <?php if ($database_info && isset($database_info['total_radios'])): ?>
+                            <div class="text-xs text-gray-400 mt-1">
+                                <?php echo $database_info['total_radios']; ?> rádios cadastradas
+                            </div>
+                            <?php endif; ?>
                         </div>
                         
                         <!-- API Status -->
-                        <div class="flex items-center justify-between p-4 bg-slate-700/30 rounded-xl">
-                            <div class="flex items-center">
+                        <div class="p-4 bg-slate-700/30 rounded-xl">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-medium">API REST</span>
                                 <span class="status-indicator <?php echo file_exists('api/endpoints/health.php') ? 'status-online' : 'status-offline'; ?>"></span>
-                                <span class="font-medium">API Endpoints</span>
                             </div>
-                            <span class="<?php echo file_exists('api/endpoints/health.php') ? 'text-green-400' : 'text-red-400'; ?>">
+                            <div class="text-sm <?php echo file_exists('api/endpoints/health.php') ? 'text-green-400' : 'text-red-400'; ?>">
                                 <?php echo file_exists('api/endpoints/health.php') ? 'Disponível' : 'Não Encontrado'; ?>
-                            </span>
+                            </div>
+                            <div class="text-xs text-gray-400 mt-1">
+                                Endpoints funcionais
+                            </div>
                         </div>
                         
                         <!-- Upload Directory -->
-                        <div class="flex items-center justify-between p-4 bg-slate-700/30 rounded-xl">
-                            <div class="flex items-center">
-                                <span class="status-indicator <?php echo is_writable('uploads/') ? 'status-online' : 'status-offline'; ?>"></span>
-                                <span class="font-medium">Diretório de Upload</span>
+                        <div class="p-4 bg-slate-700/30 rounded-xl">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-medium">Upload</span>
+                                <span class="status-indicator <?php echo $uploads_writable && $logos_writable ? 'status-online' : 'status-warning'; ?>"></span>
                             </div>
-                            <span class="<?php echo is_writable('uploads/') ? 'text-green-400' : 'text-red-400'; ?>">
-                                <?php echo is_writable('uploads/') ? 'Gravável' : 'Sem Permissão'; ?>
-                            </span>
+                            <div class="text-sm <?php echo $uploads_writable && $logos_writable ? 'text-green-400' : 'text-yellow-400'; ?>">
+                                <?php echo $uploads_writable && $logos_writable ? 'Configurado' : 'Verificar Permissões'; ?>
+                            </div>
+                            <div class="text-xs text-gray-400 mt-1">
+                                Sistema de logos
+                            </div>
+                        </div>
+                        
+                        <!-- PHP Version -->
+                        <div class="p-4 bg-slate-700/30 rounded-xl">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-medium">PHP</span>
+                                <span class="status-indicator <?php echo version_compare(PHP_VERSION, '8.1.0', '>=') ? 'status-online' : 'status-warning'; ?>"></span>
+                            </div>
+                            <div class="text-sm <?php echo version_compare(PHP_VERSION, '8.1.0', '>=') ? 'text-green-400' : 'text-yellow-400'; ?>">
+                                <?php echo PHP_VERSION; ?>
+                            </div>
+                            <div class="text-xs text-gray-400 mt-1">
+                                <?php echo version_compare(PHP_VERSION, '8.1.0', '>=') ? 'Compatível' : 'Requer 8.1+'; ?>
+                            </div>
                         </div>
                     </div>
                     
-                    <?php if (!$api_status): ?>
+                    <?php if (!$api_status || !$uploads_writable): ?>
                     <div class="mt-6 p-4 bg-red-500/20 border border-red-500/30 rounded-xl">
-                        <h4 class="font-bold text-red-400 mb-2">Problemas Detectados:</h4>
+                        <h4 class="font-bold text-red-400 mb-2 flex items-center">
+                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                            </svg>
+                            Problemas Detectados:
+                        </h4>
                         <ul class="text-sm text-red-300 space-y-1">
                             <?php if (!$api_status): ?>
                             <li>• Erro na conexão com o banco de dados</li>
                             <li>• Verifique as credenciais em api/config/database.php</li>
                             <?php endif; ?>
-                            <?php if (!is_writable('uploads/')): ?>
+                            <?php if (!$uploads_writable): ?>
                             <li>• Diretório uploads/ sem permissão de escrita</li>
+                            <li>• Execute: chmod 777 uploads/ uploads/logos/</li>
                             <?php endif; ?>
                         </ul>
                     </div>
@@ -227,8 +298,186 @@ try {
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
-                        <span>Diagnóstico</span>
+                        <span>Diagnóstico Completo</span>
                     </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="py-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
+                        Recursos do <span class="text-gradient">Sistema</span>
+                    </h2>
+                    <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+                        Uma plataforma completa para gerenciar e descobrir rádios online
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- API REST -->
+                    <div class="feature-card card p-8 text-center">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl mb-6">
+                            <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-white mb-4">API REST Completa</h3>
+                        <p class="text-gray-400">
+                            Endpoints para CRUD de rádios, upload de logos, estatísticas e relatórios de erro
+                        </p>
+                    </div>
+
+                    <!-- Database -->
+                    <div class="feature-card card p-8 text-center">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl mb-6">
+                            <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-white mb-4">Banco MySQL</h3>
+                        <p class="text-gray-400">
+                            Estrutura robusta com tabelas para rádios, estatísticas, cliques e relatórios
+                        </p>
+                    </div>
+
+                    <!-- Upload System -->
+                    <div class="feature-card card p-8 text-center">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl mb-6">
+                            <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-white mb-4">Sistema de Upload</h3>
+                        <p class="text-gray-400">
+                            Upload seguro de logos com processamento automático e redimensionamento
+                        </p>
+                    </div>
+
+                    <!-- Security -->
+                    <div class="feature-card card p-8 text-center">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-red-500 to-pink-500 rounded-2xl mb-6">
+                            <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-white mb-4">Segurança</h3>
+                        <p class="text-gray-400">
+                            Headers de segurança, validação de dados, sanitização e proteção contra ataques
+                        </p>
+                    </div>
+
+                    <!-- Statistics -->
+                    <div class="feature-card card p-8 text-center">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-2xl mb-6">
+                            <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-white mb-4">Estatísticas</h3>
+                        <p class="text-gray-400">
+                            Sistema automático de coleta de estatísticas quinzenais e relatórios detalhados
+                        </p>
+                    </div>
+
+                    <!-- Modern Interface -->
+                    <div class="feature-card card p-8 text-center">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl mb-6">
+                            <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-white mb-4">Interface Moderna</h3>
+                        <p class="text-gray-400">
+                            Design responsivo com Tailwind CSS, animações suaves e experiência premium
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- API Documentation -->
+        <section id="api" class="py-20 bg-slate-800/30">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl font-bold text-white mb-6">
+                        Documentação da <span class="text-gradient">API</span>
+                    </h2>
+                    <p class="text-xl text-gray-400">
+                        Endpoints disponíveis para integração
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Endpoints List -->
+                    <div class="card p-8">
+                        <h3 class="text-2xl font-bold text-white mb-6">Endpoints Principais</h3>
+                        <div class="space-y-4">
+                            <div class="p-4 bg-slate-700/30 rounded-xl">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="font-mono text-green-400">GET /api/health</span>
+                                    <span class="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">Status</span>
+                                </div>
+                                <p class="text-sm text-gray-400">Verificação de saúde do sistema</p>
+                            </div>
+
+                            <div class="p-4 bg-slate-700/30 rounded-xl">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="font-mono text-blue-400">GET /api/radios</span>
+                                    <span class="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded">Lista</span>
+                                </div>
+                                <p class="text-sm text-gray-400">Listar rádios com paginação e filtros</p>
+                            </div>
+
+                            <div class="p-4 bg-slate-700/30 rounded-xl">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="font-mono text-purple-400">POST /api/radios</span>
+                                    <span class="text-xs bg-purple-500/20 text-purple-400 px-2 py-1 rounded">Criar</span>
+                                </div>
+                                <p class="text-sm text-gray-400">Cadastrar nova rádio</p>
+                            </div>
+
+                            <div class="p-4 bg-slate-700/30 rounded-xl">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="font-mono text-orange-400">POST /api/upload-logo</span>
+                                    <span class="text-xs bg-orange-500/20 text-orange-400 px-2 py-1 rounded">Upload</span>
+                                </div>
+                                <p class="text-sm text-gray-400">Upload de logos (max 5MB)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Example Response -->
+                    <div class="card p-8">
+                        <h3 class="text-2xl font-bold text-white mb-6">Exemplo de Resposta</h3>
+                        <div class="bg-slate-900/50 p-4 rounded-xl overflow-x-auto">
+                            <pre class="text-sm text-gray-300"><code>{
+  "success": true,
+  "data": {
+    "radios": [
+      {
+        "id": 1,
+        "radio_name": "Rádio Exemplo FM",
+        "stream_url": "https://exemplo.com/stream",
+        "country": "Brasil",
+        "language": "portuguese",
+        "genres": ["MPB", "Rock"],
+        "total_clicks": 150,
+        "created_at": "2024-01-01T00:00:00Z"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 20,
+      "total": 1,
+      "totalPages": 1
+    }
+  }
+}</code></pre>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -236,29 +485,56 @@ try {
         <!-- System Info -->
         <section class="py-20">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <!-- PHP Info -->
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-white mb-4">Informações do Sistema</h2>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <!-- PHP Version -->
                     <div class="card p-6 text-center">
                         <div class="text-3xl font-bold text-purple-400 mb-2">
                             <?php echo PHP_VERSION; ?>
                         </div>
-                        <div class="text-gray-400">Versão do PHP</div>
+                        <div class="text-gray-400">PHP Version</div>
+                        <div class="text-xs text-gray-500 mt-1">
+                            <?php echo php_sapi_name(); ?>
+                        </div>
                     </div>
                     
-                    <!-- Server Info -->
+                    <!-- Server -->
                     <div class="card p-6 text-center">
                         <div class="text-3xl font-bold text-pink-400 mb-2">
+                            <?php 
+                            $server = $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown';
+                            echo explode('/', $server)[0];
+                            ?>
+                        </div>
+                        <div class="text-gray-400">Web Server</div>
+                        <div class="text-xs text-gray-500 mt-1">
                             <?php echo $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown'; ?>
                         </div>
-                        <div class="text-gray-400">Servidor Web</div>
                     </div>
                     
-                    <!-- Database Info -->
+                    <!-- Database -->
                     <div class="card p-6 text-center">
                         <div class="text-3xl font-bold text-blue-400 mb-2">
                             MySQL
                         </div>
-                        <div class="text-gray-400">Banco de Dados</div>
+                        <div class="text-gray-400">Database</div>
+                        <div class="text-xs text-gray-500 mt-1">
+                            <?php echo $database_info['mysql_version'] ?? 'N/A'; ?>
+                        </div>
+                    </div>
+                    
+                    <!-- Status -->
+                    <div class="card p-6 text-center">
+                        <div class="text-3xl font-bold <?php echo $api_status ? 'text-green-400' : 'text-red-400'; ?> mb-2">
+                            <?php echo $api_status ? '100%' : '0%'; ?>
+                        </div>
+                        <div class="text-gray-400">Operacional</div>
+                        <div class="text-xs text-gray-500 mt-1">
+                            Sistema <?php echo $api_status ? 'Online' : 'Offline'; ?>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -267,19 +543,60 @@ try {
 
     <!-- Footer -->
     <footer class="bg-slate-900 border-t border-slate-800 py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="flex items-center justify-center space-x-3 mb-4">
-                <div class="p-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl">
-                    <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                    </svg>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Logo and Description -->
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="p-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl">
+                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                            </svg>
+                        </div>
+                        <span class="text-xl font-bold text-gradient">RadioWave</span>
+                    </div>
+                    <p class="text-gray-400 mb-4">
+                        Portal completo de rádios online com sistema de cadastro, API REST e interface moderna.
+                    </p>
                 </div>
-                <span class="text-xl font-bold text-gradient">RadioWave</span>
+
+                <!-- Links -->
+                <div>
+                    <h3 class="text-lg font-semibold text-white mb-4">Links Úteis</h3>
+                    <ul class="space-y-2">
+                        <li><a href="api/endpoints/health.php" class="text-gray-400 hover:text-purple-400 transition-colors">Health Check</a></li>
+                        <li><a href="api/endpoints/radios.php" class="text-gray-400 hover:text-purple-400 transition-colors">API Rádios</a></li>
+                        <li><a href="debug.php" class="text-gray-400 hover:text-purple-400 transition-colors">Diagnóstico</a></li>
+                    </ul>
+                </div>
+
+                <!-- System Info -->
+                <div>
+                    <h3 class="text-lg font-semibold text-white mb-4">Sistema</h3>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li>PHP <?php echo PHP_VERSION; ?></li>
+                        <li>MySQL <?php echo $database_info['mysql_version'] ?? 'N/A'; ?></li>
+                        <li><?php echo $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown Server'; ?></li>
+                        <li>Status: <span class="<?php echo $api_status ? 'text-green-400' : 'text-red-400'; ?>"><?php echo $api_status ? 'Online' : 'Offline'; ?></span></li>
+                    </ul>
+                </div>
             </div>
-            <p class="text-gray-400">
-                © 2024 RadioWave. Portal de Rádios Online.
-            </p>
+
+            <div class="border-t border-slate-800 mt-8 pt-8 text-center">
+                <p class="text-gray-400">
+                    © 2024 RadioWave. Portal de Rádios Online - Sistema completo em PHP.
+                </p>
+            </div>
         </div>
     </footer>
+
+    <!-- Scroll to Top Button -->
+    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" 
+            class="fixed bottom-8 right-8 p-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 neon-glow">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+        </svg>
+    </button>
 </body>
 </html>
+```
