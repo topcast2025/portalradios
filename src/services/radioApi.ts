@@ -1,12 +1,14 @@
 import axios from 'axios'
 import { RadioStation, SearchFilters } from '../types/radio'
 
-const BASE_URL = 'https://nl.api.radio-browser.info/json'
+const BASE_URL = process.env.NODE_ENV === 'production' 
+  ? 'https://seudominio.com/api/external-radios' 
+  : 'http://localhost:3001/api/external-radios'
 
 class RadioAPI {
   private api = axios.create({
     baseURL: BASE_URL,
-    timeout: 10000,
+    timeout: 15000,
   })
 
   async getTopStations(limit: number = 50): Promise<RadioStation[]> {

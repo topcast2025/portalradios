@@ -7,6 +7,7 @@ require('dotenv').config();
 
 const radioRoutes = require('./routes/radioRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
+const externalRadioRoutes = require('./routes/externalRadioRoutes');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -28,7 +29,7 @@ app.use('/api/', limiter);
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
     ? ['https://seudominio.com'] 
-    : ['http://localhost:3000', 'http://localhost:5173'],
+    : ['http://localhost:3000', 'http://localhost:5173', 'https://localhost:3000'],
   credentials: true
 }));
 
@@ -41,6 +42,7 @@ app.use('/uploads', express.static('uploads'));
 
 // Routes
 app.use('/api/radios', radioRoutes);
+app.use('/api/external-radios', externalRadioRoutes);
 app.use('/api', uploadRoutes);
 
 // Health check
