@@ -2,7 +2,7 @@ const express = require('express');
 const axios = require('axios');
 const router = express.Router();
 
-const RADIO_BROWSER_API = 'https://nl.api.radio-browser.info/json';
+const RADIO_BROWSER_API = 'https://de1.api.radio-browser.info/json';
 
 // Create axios instance for external API
 const externalAPI = axios.create({
