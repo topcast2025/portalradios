@@ -4,7 +4,7 @@ import { CustomRadio, RadioRegistrationData, RadioStatistics } from '../types/cu
 
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
   ? 'https://seudominio.com/api' 
-  : 'http://localhost:3001/api'
+  : 'http://127.0.0.1:3001/api'
 
 class CustomRadioAPI {
   private api = axios.create({
