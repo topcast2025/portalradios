@@ -1,0 +1,11 @@
+# Permitir acesso ao instalador
+<Files "index.php">
+    Order allow,deny
+    Allow from all
+</Files>
+
+<Files "database.sql">
+    Order deny,allow
+    Deny from all
+</Files>
+```
