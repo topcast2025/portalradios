@@ -1,0 +1,16 @@
+# Allow access to uploaded files
+<FilesMatch "\.(jpg|jpeg|png|gif|webp)$">
+    Order allow,deny
+    Allow from all
+</FilesMatch>
+
+# Deny access to PHP files in uploads
+<FilesMatch "\.php$">
+    Order deny,allow
+    Deny from all
+</FilesMatch>
+
+# Security headers for images
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options nosniff
+</IfModule>
