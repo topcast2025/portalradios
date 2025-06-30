@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Radio, TrendingUp, Globe, Music, Headphones, Star, Play, Zap, Users, Waves } from 'lucide-react'
+import { Radio, TrendingUp, Globe, Music, Headphones, Star, Play, Zap, Users, Waves, Info } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { radioAPI } from '../services/radioApi'
 import { RadioStation } from '../types/radio'
